@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jaringan Komputer dan Internet - Bagian A: Jaringan Lokal dan Internet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- KaTeX CSS & JS untuk Render LaTeX -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, { delimiters: [ {left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false} ], throwOnError: false });"></script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #06b6d4 100%);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        /* Dark Mode Global Styles */
+        html.dark body {
+            background-color: #0f172a;
+            color: #e2e8f0;
+        }
+        html.dark .bg-white {
+            background-color: #1e293b !important;
+        }
+        html.dark .bg-slate-50 {
+            background-color: #0f172a !important;
+        }
+        html.dark .bg-slate-100 {
+            background-color: #334155 !important;
+        }
+        html.dark .bg-blue-50,
+        html.dark .bg-blue-50\/40 {
+            background-color: rgba(30, 58, 138, 0.3) !important;
+        }
+        html.dark .bg-cyan-50 {
+            background-color: rgba(22, 78, 99, 0.3) !important;
+        }
+        html.dark .bg-indigo-50 {
+            background-color: rgba(49, 46, 129, 0.3) !important;
+        }
+        html.dark .bg-amber-50 {
+            background-color: rgba(120, 53, 15, 0.35) !important;
+        }
+        html.dark .text-slate-900,
+        html.dark .text-slate-800 {
+            color: #f8fafc !important;
+        }
+        html.dark .text-slate-700,
+        html.dark .text-slate-600 {
+            color: #cbd5e1 !important;
+        }
+        html.dark .text-slate-500 {
+            color: #94a3b8 !important;
+        }
+        html.dark .text-blue-900,
+        html.dark .text-blue-800,
+        html.dark .text-blue-700 {
+            color: #93c5fd !important;
+        }
+        html.dark .text-cyan-700 {
+            color: #67e8f9 !important;
+        }
+        html.dark .text-indigo-700 {
+            color: #a5b4fc !important;
+        }
+        html.dark .text-amber-600 {
+            color: #fbbf24 !important;
+        }
+        html.dark .border-slate-200,
+        html.dark .border-slate-100,
+        html.dark .border-blue-100,
+        html.dark .border-blue-200,
+        html.dark .border-cyan-100,
+        html.dark .border-indigo-100,
+        html.dark .border-indigo-200,
+        html.dark .border-emerald-200,
+        html.dark .border-rose-200 {
+            border-color: #334155 !important;
+        }
+        html.dark .divide-slate-200 > :not([hidden]) ~ :not([hidden]) {
+            border-color: #334155 !important;
+        }
+        html.dark tr.hover\:bg-slate-50:hover {
+            background-color: #334155 !important;
+        }
+        /* Custom SVG Animations */
+        @keyframes pulse-ring {
+            0% { transform: scale(0.8); opacity: 0.8; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+        .pulse-circle {
+            animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+            transform-origin: center;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased">
+
+    <!-- Navbar Sticky -->
+    <nav class="sticky top-0 z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 shadow-sm transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center gap-2">
+                    <div class="bg-blue-600 text-white p-2 rounded-lg">
+                        <i class="fa-solid fa-network-wired text-xl"></i>
+                    </div>
+                    <span class="font-bold text-lg text-slate-900 tracking-tight">Informatika<span class="text-blue-600">Edu</span></span>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="hidden md:flex space-x-6 text-sm font-semibold text-slate-600">
+                        <a href="#jaringan-lokal" class="hover:text-blue-600 transition flex items-center gap-1.5"><i class="fa-solid fa-sitemap text-blue-500"></i> 1. Jaringan Lokal</a>
+                        <a href="#internet" class="hover:text-blue-600 transition flex items-center gap-1.5"><i class="fa-solid fa-globe text-cyan-500"></i> 2. Internet</a>
+                        <a href="#konektivitas" class="hover:text-blue-600 transition flex items-center gap-1.5"><i class="fa-solid fa-wifi text-indigo-500"></i> 3. Konektivitas</a>
+                        <a href="#kuis" class="hover:text-blue-600 transition flex items-center gap-1.5 text-amber-600"><i class="fa-solid fa-clipboard-question"></i> Latihan Soal</a>
+                    </div>
+                    <!-- Tombol Toggle Mode Terang / Gelap -->
+                    <button id="theme-toggle" onclick="toggleTheme()" aria-label="Ganti Tema Terang atau Gelap" class="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition border border-slate-200 shadow-sm">
+                        <i id="theme-icon" class="fa-solid fa-moon text-indigo-600 text-sm"></i>
+                        <span id="theme-text">Mode Gelap</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="gradient-bg text-white py-16 lg:py-24 relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <div class="lg:col-span-7 space-y-6">
+                    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/15 backdrop-blur-sm border border-white/20 text-xs font-semibold uppercase tracking-wider">
+                        <span>Bab Jaringan Komputer dan Internet</span>
+                    </div>
+                    <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight">
+                        Bagian A: Jaringan Lokal dan Internet
+                    </h1>
+                    <p class="text-lg text-blue-100 leading-relaxed max-w-2xl">
+                        Pelajari bagaimana komputer saling terhubung, bertukar informasi dari skala ruangan hingga lintas benua, serta teknologi kabel dan nirkabel yang menghubungkan kita ke dunia digital.
+                    </p>
+                    <div class="flex flex-wrap gap-3 pt-2">
+                        <a href="#jaringan-lokal" class="bg-white text-blue-800 hover:bg-blue-50 font-bold px-6 py-3 rounded-xl shadow-lg transition flex items-center gap-2">
+                            Mulai Belajar <i class="fa-solid fa-arrow-down"></i>
+                        </a>
+                    </div>
+                </div>
+                <!-- Hero SVG Illustration -->
+                <div class="lg:col-span-5 flex justify-center">
+                    <svg class="w-full max-w-md drop-shadow-2xl" viewBox="0 0 500 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Background Glow -->
+                        <circle cx="250" cy="200" r="160" fill="url(#paint0_radial)" fill-opacity="0.4"/>
+                        <!-- Connection Lines -->
+                        <path d="M250 200 L120 100 M250 200 L380 100 M250 200 L100 280 M250 200 L400 280 M250 200 L250 60" stroke="#93C5FD" stroke-width="3" stroke-dasharray="6 6"/>
+                        
+                        <!-- Central Globe/Server -->
+                        <circle cx="250" cy="200" r="55" fill="#1E40AF" stroke="#60A5FA" stroke-width="4"/>
+                        <ellipse cx="250" cy="200" rx="28" ry="55" stroke="#93C5FD" stroke-width="2"/>
+                        <line x1="195" y1="200" x2="305" y2="200" stroke="#93C5FD" stroke-width="2"/>
+                        <line x1="202" y1="175" x2="298" y2="175" stroke="#93C5FD" stroke-width="1.5"/>
+                        <line x1="202" y1="225" x2="298" y2="225" stroke="#93C5FD" stroke-width="1.5"/>
+
+                        <!-- Top Node: Cloud -->
+                        <g transform="translate(210, 20)">
+                            <rect x="0" y="0" width="80" height="50" rx="25" fill="#FFFFFF" stroke="#3B82F6" stroke-width="3"/>
+                            <text x="40" y="30" font-family="sans-serif" font-size="12" font-weight="bold" fill="#1E3A8A" text-anchor="middle">CLOUD</text>
+                        </g>
+
+                        <!-- Top Left Node: Laptop -->
+                        <g transform="translate(75, 65)">
+                            <circle cx="45" cy="35" r="35" fill="#DBEAFE" stroke="#3B82F6" stroke-width="3"/>
+                            <rect x="27" y="20" width="36" height="24" rx="3" fill="#1E40AF"/>
+                            <rect x="30" y="23" width="30" height="18" fill="#60A5FA"/>
+                            <path d="M22 44 H68 L64 49 H26 Z" fill="#1E3A8A"/>
+                        </g>
+
+                        <!-- Top Right Node: Smartphone -->
+                        <g transform="translate(335, 65)">
+                            <circle cx="45" cy="35" r="35" fill="#DBEAFE" stroke="#3B82F6" stroke-width="3"/>
+                            <rect x="33" y="15" width="24" height="40" rx="4" fill="#1E40AF"/>
+                            <rect x="35" y="19" width="20" height="30" fill="#60A5FA"/>
+                            <circle cx="45" cy="52" r="1.5" fill="white"/>
+                        </g>
+
+                        <!-- Bottom Left Node: Router/WiFi -->
+                        <g transform="translate(55, 245)">
+                            <circle cx="45" cy="35" r="35" fill="#DBEAFE" stroke="#3B82F6" stroke-width="3"/>
+                            <rect x="25" y="35" width="40" height="14" rx="3" fill="#1E40AF"/>
+                            <line x1="33" y1="35" x2="33" y2="20" stroke="#1E40AF" stroke-width="3" stroke-linecap="round"/>
+                            <line x1="57" y1="35" x2="57" y2="20" stroke="#1E40AF" stroke-width="3" stroke-linecap="round"/>
+                            <circle cx="32" cy="42" r="2" fill="#34D399"/>
+                            <circle cx="40" cy="42" r="2" fill="#34D399"/>
+                        </g>
+
+                        <!-- Bottom Right Node: Server/PC -->
+                        <g transform="translate(355, 245)">
+                            <circle cx="45" cy="35" r="35" fill="#DBEAFE" stroke="#3B82F6" stroke-width="3"/>
+                            <rect x="30" y="17" width="30" height="10" rx="2" fill="#1E40AF"/>
+                            <rect x="30" y="30" width="30" height="10" rx="2" fill="#1E40AF"/>
+                            <rect x="30" y="43" width="30" height="10" rx="2" fill="#1E40AF"/>
+                            <circle cx="35" cy="22" r="1.5" fill="#60A5FA"/>
+                            <circle cx="35" cy="35" r="1.5" fill="#60A5FA"/>
+                            <circle cx="35" cy="48" r="1.5" fill="#60A5FA"/>
+                        </g>
+
+                        <defs>
+                            <radialGradient id="paint0_radial" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(250 200) rotate(90) scale(160)">
+                                <stop stop-color="#60A5FA"/>
+                                <stop offset="1" stop-color="#1E3A8A" stop-opacity="0"/>
+                            </radialGradient>
+                        </defs>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-20">
+
+        <!-- ========================================== -->
+        <!-- BAGIAN 1: JARINGAN LOKAL                   -->
+        <!-- ========================================== -->
+        <section id="jaringan-lokal" class="scroll-mt-24">
+            <div class="flex items-center gap-3 mb-6">
+                <span class="bg-blue-600 text-white font-extrabold text-xl w-10 h-10 rounded-xl flex items-center justify-center shadow-md">1</span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Jaringan Komputer & Jaringan Lokal</h2>
+            </div>
+
+            <!-- Definisi Card -->
+            <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200 mb-10">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
+                    <div class="lg:col-span-2 space-y-4">
+                        <h3 class="text-xl font-bold text-blue-800 flex items-center gap-2">
+                            <i class="fa-solid fa-circle-info"></i> Apa itu Jaringan Komputer & Jaringan Lokal?
+                        </h3>
+                        <p class="text-slate-600 leading-relaxed">
+                            <strong>Jaringan komputer</strong> adalah sebuah sistem yang terdiri dari dua atau lebih perangkat komputer yang saling terhubung satu sama lain melalui media transmisi (baik kabel maupun nirkabel) sehingga dapat saling berbagi data, informasi, perangkat keras (seperti <em>printer</em>), dan sumber daya lainnya.
+                        </p>
+                        <p class="text-slate-600 leading-relaxed">
+                            <strong>Jaringan Lokal</strong> adalah jaringan komputer berkabel maupun nirkabel yang menghubungkan komputer beserta perangkat lainnya dalam area yang terbatas, seperti di dalam rumah, laboratorium komputer sekolah, kantor, atau gedung. Untuk dapat terhubung ke dalam suatu jaringan lokal, setiap perangkat harus memiliki <strong>IP Address</strong> (Alamat IP) lokal yang unik.
+                        </p>
+                        <div class="bg-blue-50 border-l-4 border-blue-600 p-4 rounded-r-xl mt-4">
+                            <p class="text-sm text-blue-900 font-medium">
+                                <strong>Catatan Penting:</strong> Berdasarkan jangkauan geografisnya, arsitektur jaringan komputer diklasifikasikan menjadi tiga jenis utama, yaitu <strong>LAN</strong>, <strong>MAN</strong>, dan <strong>WAN</strong>.
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Ilustrasi IP Lokal -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200 flex flex-col items-center">
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Ilustrasi Skema Jaringan Lokal</span>
+                        <svg class="w-full max-w-[260px]" viewBox="0 0 300 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Lines -->
+                            <line x1="150" y1="100" x2="60" y2="40" stroke="#64748B" stroke-width="2.5"/>
+                            <line x1="150" y1="100" x2="240" y2="40" stroke="#64748B" stroke-width="2.5"/>
+                            <line x1="150" y1="100" x2="60" y2="175" stroke="#64748B" stroke-width="2.5"/>
+                            <line x1="150" y1="100" x2="240" y2="175" stroke="#64748B" stroke-width="2.5"/>
+                            
+                            <!-- Switch Center -->
+                            <rect x="105" y="82" width="90" height="36" rx="6" fill="#1E40AF" stroke="#93C5FD" stroke-width="2"/>
+                            <text x="150" y="104" fill="white" font-size="11" font-weight="bold" text-anchor="middle" font-family="sans-serif">SWITCH / ROUTER</text>
+
+                            <!-- PC 1 -->
+                            <rect x="20" y="15" width="80" height="45" rx="6" fill="white" stroke="#3B82F6" stroke-width="2"/>
+                            <text x="60" y="35" fill="#1E293B" font-size="10" font-weight="bold" text-anchor="middle" font-family="sans-serif">Komputer A</text>
+                            <text x="60" y="50" fill="#2563EB" font-size="9" text-anchor="middle" font-family="monospace">192.168.1.2</text>
+
+                            <!-- PC 2 -->
+                            <rect x="200" y="15" width="80" height="45" rx="6" fill="white" stroke="#3B82F6" stroke-width="2"/>
+                            <text x="240" y="35" fill="#1E293B" font-size="10" font-weight="bold" text-anchor="middle" font-family="sans-serif">Komputer B</text>
+                            <text x="240" y="50" fill="#2563EB" font-size="9" text-anchor="middle" font-family="monospace">192.168.1.3</text>
+
+                            <!-- Laptop -->
+                            <rect x="20" y="155" width="80" height="45" rx="6" fill="white" stroke="#3B82F6" stroke-width="2"/>
+                            <text x="60" y="175" fill="#1E293B" font-size="10" font-weight="bold" text-anchor="middle" font-family="sans-serif">Laptop Guru</text>
+                            <text x="60" y="190" fill="#2563EB" font-size="9" text-anchor="middle" font-family="monospace">192.168.1.4</text>
+
+                            <!-- Printer -->
+                            <rect x="200" y="155" width="80" height="45" rx="6" fill="white" stroke="#10B981" stroke-width="2"/>
+                            <text x="240" y="175" fill="#1E293B" font-size="10" font-weight="bold" text-anchor="middle" font-family="sans-serif">Printer Lab</text>
+                            <text x="240" y="190" fill="#059669" font-size="9" text-anchor="middle" font-family="monospace">192.168.1.5</text>
+                        </svg>
+                        <p class="text-xs text-center text-slate-500 mt-2">Semua perangkat dapat saling mengirim file & mencetak dokumen meski tanpa internet.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Jenis-Jenis Jaringan: LAN, MAN, WAN -->
+            <h3 class="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+                <i class="fa-solid fa-layer-group text-blue-600"></i> Jenis-Jenis Jaringan Berdasarkan Jangkauan Geografis
+            </h3>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
+                
+                <!-- 1. LAN Card -->
+                <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm card-hover flex flex-col">
+                    <div class="bg-blue-50 p-6 flex flex-col items-center border-b border-blue-100">
+                        <span class="px-3 py-1 bg-blue-600 text-white text-xs font-bold rounded-full mb-3">Skala Terkecil</span>
+                        <!-- SVG Diagram LAN -->
+                        <svg class="w-48 h-36" viewBox="0 0 200 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Building / Room outline -->
+                            <rect x="15" y="15" width="170" height="120" rx="10" fill="#EFF6FF" stroke="#93C5FD" stroke-width="2" stroke-dasharray="4 4"/>
+                            <text x="100" y="32" fill="#1D4ED8" font-size="10" font-weight="bold" text-anchor="middle">1 Ruangan / 1 Gedung</text>
+                            <!-- Switch -->
+                            <rect x="75" y="65" width="50" height="20" rx="4" fill="#2563EB"/>
+                            <text x="100" y="79" fill="white" font-size="9" font-weight="bold" text-anchor="middle">Switch</text>
+                            <!-- Connections -->
+                            <line x1="75" y1="75" x2="45" y2="55" stroke="#3B82F6" stroke-width="2"/>
+                            <line x1="125" y1="75" x2="155" y2="55" stroke="#3B82F6" stroke-width="2"/>
+                            <line x1="75" y1="75" x2="45" y2="110" stroke="#3B82F6" stroke-width="2"/>
+                            <line x1="125" y1="75" x2="155" y2="110" stroke="#3B82F6" stroke-width="2"/>
+                            <!-- PCs -->
+                            <circle cx="45" cy="55" r="12" fill="#1E40AF"/>
+                            <text x="45" y="58" fill="white" font-size="8" text-anchor="middle">PC1</text>
+                            <circle cx="155" cy="55" r="12" fill="#1E40AF"/>
+                            <text x="155" y="58" fill="white" font-size="8" text-anchor="middle">PC2</text>
+                            <circle cx="45" cy="110" r="12" fill="#1E40AF"/>
+                            <text x="45" y="113" fill="white" font-size="8" text-anchor="middle">PC3</text>
+                            <circle cx="155" cy="110" r="12" fill="#059669"/>
+                            <text x="155" y="113" fill="white" font-size="8" text-anchor="middle">Print</text>
+                        </svg>
+                        <h4 class="text-xl font-extrabold text-slate-900 mt-2">LAN</h4>
+                        <p class="text-xs font-semibold text-blue-600">Local Area Network</p>
+                    </div>
+                    <div class="p-6 space-y-4 flex-1 flex flex-col justify-between">
+                        <p class="text-sm text-slate-600 leading-relaxed">
+                            <strong>LAN</strong> adalah jaringan komputer yang mencakup wilayah geografis yang sangat kecil dan terbatas, seperti satu ruangan, rumah, laboratorium sekolah, atau satu gedung perkantoran.
+                        </p>
+                        <div class="space-y-2 pt-2 border-t border-slate-100 text-xs">
+                            <div class="flex justify-between"><span class="text-slate-500">Jarak Jangkauan:</span><span class="font-bold text-slate-800">$10\text{ m} - 1\text{ km}$</span></div>
+                            <div class="flex justify-between"><span class="text-slate-500">Kecepatan Transfer:</span><span class="font-bold text-emerald-600">Sangat Tinggi ($100\text{ Mbps} - 10\text{ Gbps}$)</span></div>
+                            <div class="flex justify-between"><span class="text-slate-500">Biaya Instalasi:</span><span class="font-bold text-slate-800">Murah & Mudah Dikelola</span></div>
+                            <div class="bg-slate-50 p-2.5 rounded-lg mt-2 text-slate-700">
+                                <strong>Contoh:</strong> Jaringan Laboratorium Komputer Sekolah, Wi-Fi di dalam rumah.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. MAN Card -->
+                <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm card-hover flex flex-col">
+                    <div class="bg-cyan-50 p-6 flex flex-col items-center border-b border-cyan-100">
+                        <span class="px-3 py-1 bg-cyan-600 text-white text-xs font-bold rounded-full mb-3">Skala Perkotaan</span>
+                        <!-- SVG Diagram MAN -->
+                        <svg class="w-48 h-36" viewBox="0 0 200 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Connection triangle -->
+                            <path d="M100 35 L45 110 L155 110 Z" stroke="#0891B2" stroke-width="2.5" stroke-dasharray="5 3"/>
+                            <!-- Central Tower -->
+                            <circle cx="100" cy="82" r="14" fill="#0E7490"/>
+                            <text x="100" y="86" fill="white" font-size="8" font-weight="bold" text-anchor="middle">MAN</text>
+                            <!-- Building 1 (Top) -->
+                            <rect x="75" y="15" width="50" height="28" rx="4" fill="#06B6D4"/>
+                            <text x="100" y="32" fill="white" font-size="8" font-weight="bold" text-anchor="middle">Kantor Pusat</text>
+                            <!-- Building 2 (Bottom Left) -->
+                            <rect x="15" y="100" width="55" height="28" rx="4" fill="#0891B2"/>
+                            <text x="42" y="117" fill="white" font-size="8" font-weight="bold" text-anchor="middle">Cabang A</text>
+                            <!-- Building 3 (Bottom Right) -->
+                            <rect x="130" y="100" width="55" height="28" rx="4" fill="#0891B2"/>
+                            <text x="157" y="117" fill="white" font-size="8" font-weight="bold" text-anchor="middle">Cabang B</text>
+                        </svg>
+                        <h4 class="text-xl font-extrabold text-slate-900 mt-2">MAN</h4>
+                        <p class="text-xs font-semibold text-cyan-700">Metropolitan Area Network</p>
+                    </div>
+                    <div class="p-6 space-y-4 flex-1 flex flex-col justify-between">
+                        <p class="text-sm text-slate-600 leading-relaxed">
+                            <strong>MAN</strong> adalah jaringan komputer yang menghubungkan beberapa jaringan LAN yang terpisah di dalam satu area perkotaan atau wilayah metropolitan yang sama.
+                        </p>
+                        <div class="space-y-2 pt-2 border-t border-slate-100 text-xs">
+                            <div class="flex justify-between"><span class="text-slate-500">Jarak Jangkauan:</span><span class="font-bold text-slate-800">$10\text{ km} - 50\text{ km}$ (1 Kota)</span></div>
+                            <div class="flex justify-between"><span class="text-slate-500">Media Transmisi:</span><span class="font-bold text-cyan-700">Serat Optik / Gelombang Mikro</span></div>
+                            <div class="flex justify-between"><span class="text-slate-500">Biaya Instalasi:</span><span class="font-bold text-slate-800">Sedang - Tinggi</span></div>
+                            <div class="bg-slate-50 p-2.5 rounded-lg mt-2 text-slate-700">
+                                <strong>Contoh:</strong> Jaringan antar kantor cabang Bank dalam satu kota, jaringan antar gedung kampus universitas.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. WAN Card -->
+                <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm card-hover flex flex-col">
+                    <div class="bg-indigo-50 p-6 flex flex-col items-center border-b border-indigo-100">
+                        <span class="px-3 py-1 bg-indigo-600 text-white text-xs font-bold rounded-full mb-3">Skala Dunia / Global</span>
+                        <!-- SVG Diagram WAN -->
+                        <svg class="w-48 h-36" viewBox="0 0 200 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Globe in Center -->
+                            <circle cx="100" cy="75" r="38" fill="#E0E7FF" stroke="#4F46E5" stroke-width="2.5"/>
+                            <ellipse cx="100" cy="75" rx="18" ry="38" stroke="#6366F1" stroke-width="1.5"/>
+                            <line x1="62" y1="75" x2="138" y2="75" stroke="#6366F1" stroke-width="1.5"/>
+                            <!-- Satellite / Nodes around globe -->
+                            <circle cx="35" cy="35" r="16" fill="#4338CA"/>
+                            <text x="35" y="38" fill="white" font-size="7" font-weight="bold" text-anchor="middle">ASIA</text>
+                            <circle cx="165" cy="35" r="16" fill="#4338CA"/>
+                            <text x="165" y="38" fill="white" font-size="7" font-weight="bold" text-anchor="middle">EROPA</text>
+                            <circle cx="100" cy="135" r="14" fill="#4338CA"/>
+                            <text x="100" y="138" fill="white" font-size="7" font-weight="bold" text-anchor="middle">USA</text>
+                            <!-- Connecting arcs -->
+                            <line x1="50" y1="42" x2="72" y2="55" stroke="#4F46E5" stroke-width="2"/>
+                            <line x1="150" y1="42" x2="128" y2="55" stroke="#4F46E5" stroke-width="2"/>
+                            <line x1="100" y1="113" x2="100" y2="121" stroke="#4F46E5" stroke-width="2"/>
+                        </svg>
+                        <h4 class="text-xl font-extrabold text-slate-900 mt-2">WAN</h4>
+                        <p class="text-xs font-semibold text-indigo-700">Wide Area Network</p>
+                    </div>
+                    <div class="p-6 space-y-4 flex-1 flex flex-col justify-between">
+                        <p class="text-sm text-slate-600 leading-relaxed">
+                            <strong>WAN</strong> adalah jaringan komputer dengan cakupan area geografis yang sangat luas, melintasi batas provinsi, negara, bahkan benua dengan menggabungkan banyak LAN dan MAN.
+                        </p>
+                        <div class="space-y-2 pt-2 border-t border-slate-100 text-xs">
+                            <div class="flex justify-between"><span class="text-slate-500">Jarak Jangkauan:</span><span class="font-bold text-slate-800">$> 100\text{ km}$ (Antar Negara/Benua)</span></div>
+                            <div class="flex justify-between"><span class="text-slate-500">Media Transmisi:</span><span class="font-bold text-indigo-700">Kabel Bawah Laut & Satelit</span></div>
+                            <div class="flex justify-between"><span class="text-slate-500">Biaya Instalasi:</span><span class="font-bold text-slate-800">Sangat Tinggi & Kompleks</span></div>
+                            <div class="bg-slate-50 p-2.5 rounded-lg mt-2 text-slate-700">
+                                <strong>Contoh:</strong> Jaringan perusahaan multinasional, jaringan ATM internasional, dan <strong>Internet</strong>.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Tabel Perbandingan LAN, MAN, WAN -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="bg-slate-800 text-white px-6 py-4 flex items-center justify-between">
+                    <h4 class="font-bold text-sm sm:text-base flex items-center gap-2">
+                        <i class="fa-solid fa-table"></i> Tabel Perbandingan LAN, MAN, dan WAN
+                    </h4>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-sm">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-700 border-b border-slate-200">
+                                <th class="py-3.5 px-6 font-bold">Karakteristik</th>
+                                <th class="py-3.5 px-6 font-bold text-blue-700">LAN (Local Area Network)</th>
+                                <th class="py-3.5 px-6 font-bold text-cyan-700">MAN (Metropolitan Area Network)</th>
+                                <th class="py-3.5 px-6 font-bold text-indigo-700">WAN (Wide Area Network)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200 text-slate-600">
+                            <tr class="hover:bg-slate-50">
+                                <td class="py-3.5 px-6 font-semibold text-slate-800">Cakupan Area</td>
+                                <td class="py-3.5 px-6">Ruangan, rumah, sekolah, gedung</td>
+                                <td class="py-3.5 px-6">Satu kota atau wilayah metropolitan</td>
+                                <td class="py-3.5 px-6">Antar kota, negara, hingga seluruh dunia</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50">
+                                <td class="py-3.5 px-6 font-semibold text-slate-800">Radius Jarak</td>
+                                <td class="py-3.5 px-6">$10\text{ meter} - 1\text{ km}$</td>
+                                <td class="py-3.5 px-6">$10\text{ km} - 50\text{ km}$</td>
+                                <td class="py-3.5 px-6">$> 100\text{ km}$ hingga ribuan kilometer</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50">
+                                <td class="py-3.5 px-6 font-semibold text-slate-800">Media Transmisi Utama</td>
+                                <td class="py-3.5 px-6">Kabel UTP (Ethernet), Wi-Fi</td>
+                                <td class="py-3.5 px-6">Fiber Optik, Gelombang Radio/Mikro</td>
+                                <td class="py-3.5 px-6">Fiber Optik Bawah Laut, Satelit</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50">
+                                <td class="py-3.5 px-6 font-semibold text-slate-800">Kepemilikan</td>
+                                <td class="py-3.5 px-6">Privat (Pribadi / Sekolah / Kantor)</td>
+                                <td class="py-3.5 px-6">Privat atau Konsorsium / Penyedia Jasa</td>
+                                <td class="py-3.5 px-6">Publik / Kolektif / Penyedia Telekomunikasi</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50">
+                                <td class="py-3.5 px-6 font-semibold text-slate-800">Perangkat Utama</td>
+                                <td class="py-3.5 px-6">Switch, Hub, Access Point, NIC</td>
+                                <td class="py-3.5 px-6">Router, Modem, Antena Penguat</td>
+                                <td class="py-3.5 px-6">Core Router, Satelit, Server Backbone</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- BAGIAN 2: INTERNET                         -->
+        <!-- ========================================== -->
+        <section id="internet" class="scroll-mt-24">
+            <div class="flex items-center gap-3 mb-6">
+                <span class="bg-cyan-600 text-white font-extrabold text-xl w-10 h-10 rounded-xl flex items-center justify-center shadow-md">2</span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Internet</h2>
+            </div>
+
+            <!-- Definisi & Penjelasan Singkat Internet -->
+            <div class="bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 text-white rounded-2xl p-6 sm:p-10 shadow-lg mb-10">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                    <div class="lg:col-span-8 space-y-4">
+                        <div class="inline-block px-3 py-1 bg-cyan-500/20 border border-cyan-400/30 text-cyan-300 rounded-lg text-xs font-bold uppercase tracking-wider">
+                            Interconnected Network
+                        </div>
+                        <h3 class="text-2xl sm:text-3xl font-extrabold">Definisi & Penjelasan Singkat Internet</h3>
+                        <p class="text-slate-300 leading-relaxed">
+                            <strong>Internet</strong> (singkatan dari <em><strong>Interconnected Network</strong></em>) adalah sistem jaringan komputer global yang saling menghubungkan jutaan hingga miliaran perangkat di seluruh dunia. Internet merupakan bentuk nyata dari jaringan <strong>WAN raksasa</strong>.
+                        </p>
+                        <p class="text-slate-300 leading-relaxed">
+                            Agar berbagai jenis komputer dan ponsel di seluruh dunia dapat saling berkomunikasi tanpa kendala bahasa mesin, internet menggunakan protokol komunikasi standar yang disebut <strong>TCP/IP</strong> (<em>Transmission Control Protocol / Internet Protocol</em>). Protokol ini mengatur bagaimana paket data dipecah, diberi alamat tujuan, dikirim melewati berbagai jalur jaringan, hingga disatukan kembali di perangkat penerima.
+                        </p>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
+                            <div class="bg-white/10 p-4 rounded-xl border border-white/10">
+                                <div class="text-cyan-400 font-bold text-sm mb-1"><i class="fa-solid fa-clock-rotate-left mr-1"></i> Sejarah Singkat</div>
+                                <p class="text-xs text-slate-300">Bermula pada tahun 1969 dari proyek <strong>ARPANET</strong> oleh Departemen Pertahanan Amerika Serikat (DARPA).</p>
+                            </div>
+                            <div class="bg-white/10 p-4 rounded-xl border border-white/10">
+                                <div class="text-cyan-400 font-bold text-sm mb-1"><i class="fa-solid fa-code-branch mr-1"></i> Standar Protokol</div>
+                                <p class="text-xs text-slate-300">Menggunakan standar <strong>TCP/IP</strong> yang diresmikan secara luas sejak tahun 1983 hingga saat ini.</p>
+                            </div>
+                            <div class="bg-white/10 p-4 rounded-xl border border-white/10">
+                                <div class="text-cyan-400 font-bold text-sm mb-1"><i class="fa-solid fa-building-shield mr-1"></i> Peran ISP</div>
+                                <p class="text-xs text-slate-300">Untuk terhubung ke internet, pengguna memerlukan layanan dari <strong>ISP</strong> (<em>Internet Service Provider</em>).</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Diagram Cara Kerja Internet -->
+                    <div class="lg:col-span-4 flex justify-center">
+                        <div class="bg-white/5 border border-white/10 rounded-2xl p-6 w-full text-center">
+                            <span class="text-xs font-bold uppercase tracking-wider text-cyan-300 block mb-4">Alur Koneksi Internet</span>
+                            <div class="space-y-3">
+                                <div class="bg-blue-600/40 border border-blue-400/40 rounded-xl p-3 flex items-center gap-3">
+                                    <i class="fa-solid fa-laptop text-2xl text-cyan-300 w-8"></i>
+                                    <div class="text-left">
+                                        <div class="text-xs font-bold">1. Perangkat Pengguna</div>
+                                        <div class="text-[11px] text-slate-300">Komputer / Smartphone di Rumah</div>
+                                    </div>
+                                </div>
+                                <i class="fa-solid fa-arrows-up-down text-cyan-400"></i>
+                                <div class="bg-blue-600/40 border border-blue-400/40 rounded-xl p-3 flex items-center gap-3">
+                                    <i class="fa-solid fa-tower-broadcast text-2xl text-cyan-300 w-8"></i>
+                                    <div class="text-left">
+                                        <div class="text-xs font-bold">2. Modem / Router & ISP</div>
+                                        <div class="text-[11px] text-slate-300">Penyedia Jasa Internet Lokal</div>
+                                    </div>
+                                </div>
+                                <i class="fa-solid fa-arrows-up-down text-cyan-400"></i>
+                                <div class="bg-cyan-600/40 border border-cyan-400/40 rounded-xl p-3 flex items-center gap-3">
+                                    <i class="fa-solid fa-server text-2xl text-cyan-300 w-8"></i>
+                                    <div class="text-left">
+                                        <div class="text-xs font-bold">3. Server Global (WWW)</div>
+                                        <div class="text-[11px] text-slate-300">Website, Cloud, Media Sosial</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Manfaat & Dampak Negatif Internet -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                
+                <!-- Kolom Manfaat Internet -->
+                <div class="bg-white rounded-2xl border border-emerald-200 shadow-sm overflow-hidden">
+                    <div class="bg-emerald-600 text-white px-6 py-4 flex items-center gap-3">
+                        <i class="fa-solid fa-circle-check text-2xl"></i>
+                        <div>
+                            <h3 class="font-extrabold text-lg">Manfaat Internet</h3>
+                            <p class="text-xs text-emerald-100">Dampak positif bagi kehidupan manusia</p>
+                        </div>
+                    </div>
+                    <div class="p-6 space-y-4">
+                        <div class="flex gap-4 items-start">
+                            <div class="bg-emerald-100 text-emerald-700 p-3 rounded-xl shrink-0 mt-0.5"><i class="fa-solid fa-comments"></i></div>
+                            <div>
+                                <h4 class="font-bold text-slate-900 text-sm">1. Komunikasi Cepat Tanpa Batas</h4>
+                                <p class="text-xs text-slate-600 leading-relaxed mt-1">Memungkinkan pengiriman pesan instan (<em>chatting</em>), surat elektronik (<em>e-mail</em>), hingga panggilan video (<em>video conference</em>) secara <em>real-time</em> ke seluruh penjuru dunia.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 items-start">
+                            <div class="bg-emerald-100 text-emerald-700 p-3 rounded-xl shrink-0 mt-0.5"><i class="fa-solid fa-graduation-cap"></i></div>
+                            <div>
+                                <h4 class="font-bold text-slate-900 text-sm">2. Sumber Informasi dan Pendidikan (E-Learning)</h4>
+                                <p class="text-xs text-slate-600 leading-relaxed mt-1">Memudahkan pelajar dan guru mengakses jutaan buku digital (<em>e-book</em>), jurnal ilmiah, ensiklopedia daring, serta platform pembelajaran jarak jauh.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 items-start">
+                            <div class="bg-emerald-100 text-emerald-700 p-3 rounded-xl shrink-0 mt-0.5"><i class="fa-solid fa-cart-shopping"></i></div>
+                            <div>
+                                <h4 class="font-bold text-slate-900 text-sm">3. Kemudahan Ekonomi & Perdagangan (E-Commerce)</h4>
+                                <p class="text-xs text-slate-600 leading-relaxed mt-1">Membuka peluang bisnis toko daring, transaksi perbankan digital (<em>m-banking</em>, dompet digital), serta menciptakan lapangan pekerjaan baru.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 items-start">
+                            <div class="bg-emerald-100 text-emerald-700 p-3 rounded-xl shrink-0 mt-0.5"><i class="fa-solid fa-building-columns"></i></div>
+                            <div>
+                                <h4 class="font-bold text-slate-900 text-sm">4. Layanan Publik & Pemerintahan (E-Government)</h4>
+                                <p class="text-xs text-slate-600 leading-relaxed mt-1">Mempermudah masyarakat mengurus administrasi kependudukan, pajak, layanan kesehatan, hingga transportasi umum secara daring.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 items-start">
+                            <div class="bg-emerald-100 text-emerald-700 p-3 rounded-xl shrink-0 mt-0.5"><i class="fa-solid fa-film"></i></div>
+                            <div>
+                                <h4 class="font-bold text-slate-900 text-sm">5. Sarana Hiburan dan Kolaborasi</h4>
+                                <p class="text-xs text-slate-600 leading-relaxed mt-1">Menyediakan layanan <em>streaming</em> musik, video, permainan daring, serta kolaborasi dokumen secara bersamaan di penyimpanan awan (<em>Cloud</em>).</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kolom Dampak Negatif Internet -->
+                <div class="bg-white rounded-2xl border border-rose-200 shadow-sm overflow-hidden">
+                    <div class="bg-rose-600 text-white px-6 py-4 flex items-center gap-3">
+                        <i class="fa-solid fa-triangle-exclamation text-2xl"></i>
+                        <div>
+                            <h3 class="font-extrabold text-lg">Dampak Negatif Internet</h3>
+                            <p class="text-xs text-rose-100">Risiko dan ancaman yang perlu diwaspadai</p>
+                        </div>
+                    </div>
+                    <div class="p-6 space-y-4">
+                        <div class="flex gap-4 items-start">
+                            <div class="bg-rose-100 text-rose-700 p-3 rounded-xl shrink-0 mt-0.5"><i class="fa-solid fa-bullhorn"></i></div>
+                            <div>
+                                <h4 class="font-bold text-slate-900 text-sm">1. Penyebaran Berita Bohong (Hoaks) & Ujaran Kebencian</h4>
+                                <p class="text-xs text-slate-600 leading-relaxed mt-1">Informasi yang belum terverifikasi kebenarannya sangat mudah menyebar dan memicu kesalahpahaman atau konflik di masyarakat.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 items-start">
+                            <div class="bg-rose-100 text-rose-700 p-3 rounded-xl shrink-0 mt-0.5"><i class="fa-solid fa-user-secret"></i></div>
+                            <div>
+                                <h4 class="font-bold text-slate-900 text-sm">2. Kejahatan Siber (Cybercrime) & Pencurian Data</h4>
+                                <p class="text-xs text-slate-600 leading-relaxed mt-1">Ancaman peretasan (<em>hacking</em>), penipuan daring (<em>phishing</em>), penyebaran virus/<em>malware</em>, hingga pencurian identitas dan data pribadi.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 items-start">
+                            <div class="bg-rose-100 text-rose-700 p-3 rounded-xl shrink-0 mt-0.5"><i class="fa-solid fa-comment-slash"></i></div>
+                            <div>
+                                <h4 class="font-bold text-slate-900 text-sm">3. Perundungan Siber (Cyberbullying)</h4>
+                                <p class="text-xs text-slate-600 leading-relaxed mt-1">Tindakan mempermalukan, mengintimidasi, atau melecehkan seseorang melalui media sosial yang berdampak buruk pada kesehatan mental korban.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 items-start">
+                            <div class="bg-rose-100 text-rose-700 p-3 rounded-xl shrink-0 mt-0.5"><i class="fa-solid fa-gamepad"></i></div>
+                            <div>
+                                <h4 class="font-bold text-slate-900 text-sm">4. Kecanduan (Adiksi) & Menurunnya Produktivitas</h4>
+                                <p class="text-xs text-slate-600 leading-relaxed mt-1">Penggunaan media sosial atau gim daring secara berlebihan dapat menyebabkan lupa waktu, gangguan tidur, serta menurunnya interaksi sosial di dunia nyata.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 items-start">
+                            <div class="bg-rose-100 text-rose-700 p-3 rounded-xl shrink-0 mt-0.5"><i class="fa-solid fa-ban"></i></div>
+                            <div>
+                                <h4 class="font-bold text-slate-900 text-sm">5. Paparan Konten Negatif & Pelanggaran Hak Cipta</h4>
+                                <p class="text-xs text-slate-600 leading-relaxed mt-1">Kemudahan akses membuat pengguna rentan terpapar konten kekerasan, perjudian, serta maraknya pembajakan karya intelektual atau plagiarisme.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- BAGIAN 3: KONEKTIVITAS INTERNET            -->
+        <!-- ========================================== -->
+        <section id="konektivitas" class="scroll-mt-24">
+            <div class="flex items-center gap-3 mb-4">
+                <span class="bg-indigo-600 text-white font-extrabold text-xl w-10 h-10 rounded-xl flex items-center justify-center shadow-md">3</span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Konektivitas Internet</h2>
+            </div>
+            <p class="text-slate-600 mb-8 max-w-3xl">
+                Untuk dapat terhubung ke jaringan internet, perangkat kita memerlukan media penghubung. Secara umum, konektivitas internet terbagi menjadi dua kategori utama: <strong>Jaringan Berkabel (<em>Wired Network</em>)</strong> dan <strong>Jaringan Nirkabel (<em>Wireless Network</em>)</strong>.
+            </p>
+
+            <!-- SUB-BAGIAN 3.1: KONEKTIVITAS BERKABEL -->
+            <div class="mb-14">
+                <div class="bg-blue-900 text-white rounded-t-2xl px-6 py-4 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-plug-circle-bolt text-2xl text-blue-300"></i>
+                        <div>
+                            <h3 class="text-lg sm:text-xl font-bold">A. Konektivitas Internet pada Jaringan Berkabel (Wired)</h3>
+                            <p class="text-xs text-blue-200">Menggunakan fisik kabel sebagai media transmisi penghantar sinyal data</p>
+                        </div>
+                    </div>
+                    <span class="hidden sm:inline-block px-3 py-1 bg-blue-800 rounded-full text-xs font-semibold">Stabil & Cepat</span>
+                </div>
+
+                <div class="bg-white border border-t-0 border-slate-200 rounded-b-2xl p-6 sm:p-8 shadow-sm">
+                    <!-- Visualisasi Jenis Kabel Fisik -->
+                    <div class="mb-8 bg-slate-50 p-5 rounded-xl border border-slate-200">
+                        <h4 class="text-sm font-bold text-slate-700 uppercase tracking-wider mb-4 text-center">Ilustrasi Media Fisik Kabel Jaringan</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <!-- Twisted Pair (UTP) -->
+                            <div class="bg-white p-4 rounded-xl border border-slate-200 flex flex-col items-center text-center">
+                                <svg class="w-40 h-20 mb-2" viewBox="0 0 200 90" fill="none">
+                                    <!-- Outer Jacket -->
+                                    <rect x="10" y="28" width="90" height="34" rx="4" fill="#64748B"/>
+                                    <text x="55" y="49" fill="white" font-size="10" font-weight="bold" text-anchor="middle">Jaket UTP</text>
+                                    <!-- Twisted wires -->
+                                    <path d="M100 33 Q120 20 140 33 T180 33" stroke="#EA580C" stroke-width="4" fill="none"/>
+                                    <path d="M100 33 Q120 46 140 33 T180 33" stroke="#FDBA74" stroke-width="3" stroke-dasharray="4 2" fill="none"/>
+                                    <path d="M100 55 Q120 42 140 55 T180 55" stroke="#2563EB" stroke-width="4" fill="none"/>
+                                    <path d="M100 55 Q120 68 140 55 T180 55" stroke="#93C5FD" stroke-width="3" stroke-dasharray="4 2" fill="none"/>
+                                </svg>
+                                <span class="font-bold text-sm text-slate-800">1. Kabel Twisted Pair (UTP)</span>
+                                <span class="text-xs text-slate-500 mt-1">Pasangan kabel tembaga berpilin dengan konektor RJ-45 (LAN/ADSL).</span>
+                            </div>
+                            <!-- Coaxial -->
+                            <div class="bg-white p-4 rounded-xl border border-slate-200 flex flex-col items-center text-center">
+                                <svg class="w-40 h-20 mb-2" viewBox="0 0 200 90" fill="none">
+                                    <!-- Jacket -->
+                                    <rect x="10" y="25" width="60" height="40" rx="3" fill="#1E293B"/>
+                                    <!-- Braided Shield -->
+                                    <rect x="70" y="30" width="40" height="30" fill="#94A3B8"/>
+                                    <!-- Dielectric Insulator -->
+                                    <rect x="110" y="35" width="35" height="20" fill="#E2E8F0" stroke="#CBD5E1"/>
+                                    <!-- Copper Core -->
+                                    <line x1="145" y1="45" x2="185" y2="45" stroke="#D97706" stroke-width="6" stroke-linecap="round"/>
+                                </svg>
+                                <span class="font-bold text-sm text-slate-800">2. Kabel Coaxial</span>
+                                <span class="text-xs text-slate-500 mt-1">Inti tembaga tunggal berlapis pelindung isolator (TV Kabel / HFC).</span>
+                            </div>
+                            <!-- Fiber Optic -->
+                            <div class="bg-white p-4 rounded-xl border border-slate-200 flex flex-col items-center text-center">
+                                <svg class="w-40 h-20 mb-2" viewBox="0 0 200 90" fill="none">
+                                    <!-- Outer Jacket -->
+                                    <rect x="10" y="28" width="75" height="34" rx="4" fill="#F59E0B"/>
+                                    <text x="47" y="49" fill="white" font-size="9" font-weight="bold" text-anchor="middle">Serat Kaca</text>
+                                    <!-- Glass strands -->
+                                    <line x1="85" y1="35" x2="165" y2="25" stroke="#38BDF8" stroke-width="3"/>
+                                    <line x1="85" y1="45" x2="175" y2="45" stroke="#38BDF8" stroke-width="3"/>
+                                    <line x1="85" y1="55" x2="165" y2="65" stroke="#38BDF8" stroke-width="3"/>
+                                    <!-- Light glow at tips -->
+                                    <circle cx="165" cy="25" r="5" fill="#0284C7"/>
+                                    <circle cx="175" cy="45" r="6" fill="#0284C7"/>
+                                    <circle cx="165" cy="65" r="5" fill="#0284C7"/>
+                                </svg>
+                                <span class="font-bold text-sm text-slate-800">3. Kabel Fiber Optik</span>
+                                <span class="text-xs text-slate-500 mt-1">Serat kaca murni yang mentransmisikan sinyal cahaya berkecepatan tinggi.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4 Jenis Layanan Konektivitas Berkabel -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        
+                        <!-- 1. Dial-Up PSTN -->
+                        <div class="border border-slate-200 rounded-xl p-5 hover:border-blue-400 transition bg-white">
+                            <div class="flex justify-between items-start mb-3">
+                                <div class="flex items-center gap-2.5">
+                                    <span class="bg-blue-100 text-blue-700 font-bold p-2.5 rounded-lg"><i class="fa-solid fa-phone-volume"></i></span>
+                                    <div>
+                                        <h4 class="font-bold text-slate-900">1. Dial-Up PSTN</h4>
+                                        <span class="text-xs text-slate-500">Public Switched Telephone Network</span>
+                                    </div>
+                                </div>
+                                <span class="bg-slate-100 text-slate-700 text-xs font-bold px-2.5 py-1 rounded">Maks $56\text{ Kbps}$</span>
+                            </div>
+                            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                                Teknologi koneksi internet generasi awal yang memanfaatkan jaringan kabel telepon rumah (PSTN). Komputer dihubungkan ke modem analog untuk melakukan panggilan (<em>dial</em>) ke server ISP. Saat internet aktif, telepon rumah tidak dapat digunakan untuk menelepon.
+                            </p>
+                        </div>
+
+                        <!-- 2. ADSL -->
+                        <div class="border border-slate-200 rounded-xl p-5 hover:border-blue-400 transition bg-white">
+                            <div class="flex justify-between items-start mb-3">
+                                <div class="flex items-center gap-2.5">
+                                    <span class="bg-blue-100 text-blue-700 font-bold p-2.5 rounded-lg"><i class="fa-solid fa-tty"></i></span>
+                                    <div>
+                                        <h4 class="font-bold text-slate-900">2. ADSL</h4>
+                                        <span class="text-xs text-slate-500">Asymmetric Digital Subscriber Line</span>
+                                    </div>
+                                </div>
+                                <span class="bg-blue-50 text-blue-700 text-xs font-bold px-2.5 py-1 rounded">Hingga $24\text{ Mbps}$</span>
+                            </div>
+                            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                                Sama-sama menggunakan kabel telepon tembaga, namun dilengkapi alat bernama <strong>Splitter</strong> untuk memisahkan frekuensi suara dan data internet. Hasilnya, telepon rumah dan internet dapat digunakan secara bersamaan. Disebut <em>Asymmetric</em> karena kecepatan <em>download</em> lebih tinggi daripada kecepatan <em>upload</em>.
+                            </p>
+                        </div>
+
+                        <!-- 3. LAN (Ethernet) -->
+                        <div class="border border-slate-200 rounded-xl p-5 hover:border-blue-400 transition bg-white">
+                            <div class="flex justify-between items-start mb-3">
+                                <div class="flex items-center gap-2.5">
+                                    <span class="bg-blue-100 text-blue-700 font-bold p-2.5 rounded-lg"><i class="fa-solid fa-ethernet"></i></span>
+                                    <div>
+                                        <h4 class="font-bold text-slate-900">3. Koneksi Jaringan LAN & TV Kabel</h4>
+                                        <span class="text-xs text-slate-500">Kabel UTP (RJ-45) & Coaxial</span>
+                                    </div>
+                                </div>
+                                <span class="bg-blue-50 text-blue-700 text-xs font-bold px-2.5 py-1 rounded">$100\text{ Mbps} - 1\text{ Gbps}$</span>
+                            </div>
+                            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                                Komputer dihubungkan ke satu komputer induk (<em>Server</em>) atau <em>Router</em> utama yang telah berlangganan internet menggunakan kabel UTP/Ethernet. Selain itu, terdapat juga layanan internet yang menumpang pada jaringan <strong>Kabel Coaxial TV Kabel</strong> dengan menggunakan <em>Cable Modem</em>.
+                            </p>
+                        </div>
+
+                        <!-- 4. Fiber Optik (FTTH) -->
+                        <div class="border border-blue-200 bg-blue-50/40 rounded-xl p-5 hover:border-blue-500 transition">
+                            <div class="flex justify-between items-start mb-3">
+                                <div class="flex items-center gap-2.5">
+                                    <span class="bg-blue-600 text-white font-bold p-2.5 rounded-lg"><i class="fa-solid fa-bolt"></i></span>
+                                    <div>
+                                        <h4 class="font-bold text-slate-900">4. Serat Optik (Fiber Optic / FTTH)</h4>
+                                        <span class="text-xs text-blue-600 font-medium">Teknologi Berkabel Modern Tercepat</span>
+                                    </div>
+                                </div>
+                                <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2.5 py-1 rounded">Hingga $> 1\text{ Gbps}$</span>
+                            </div>
+                            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                                Menggunakan kabel serat kaca halus yang mengirimkan data dalam bentuk <strong>pulsa cahaya</strong>. Memiliki kecepatan sangat tinggi, stabil, tahan terhadap gangguan gelombang elektromagnetik/cuaca, dan saat ini menjadi tulang punggung internet rumahan (<em>Broadband</em>) maupun kabel bawah laut antarbenua.
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUB-BAGIAN 3.2: KONEKTIVITAS NIRKABEL -->
+            <div>
+                <div class="bg-indigo-900 text-white rounded-t-2xl px-6 py-4 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-wifi text-2xl text-indigo-300"></i>
+                        <div>
+                            <h3 class="text-lg sm:text-xl font-bold">B. Konektivitas Internet pada Jaringan Nirkabel (Wireless)</h3>
+                            <p class="text-xs text-indigo-200">Menggunakan gelombang elektromagnetik (radio, mikro, inframerah) melalui udara tanpa kabel</p>
+                        </div>
+                    </div>
+                    <span class="hidden sm:inline-block px-3 py-1 bg-indigo-800 rounded-full text-xs font-semibold">Mobilitas Tinggi</span>
+                </div>
+
+                <div class="bg-white border border-t-0 border-slate-200 rounded-b-2xl p-6 sm:p-8 shadow-sm space-y-8">
+                    
+                    <!-- 4 Jenis Layanan Konektivitas Nirkabel -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        
+                        <!-- 1. GPRS / Seluler -->
+                        <div class="border border-slate-200 rounded-xl p-5 hover:border-indigo-400 transition">
+                            <div class="flex items-center gap-3 mb-3">
+                                <span class="bg-indigo-100 text-indigo-700 font-bold p-2.5 rounded-lg"><i class="fa-solid fa-tower-cell"></i></span>
+                                <div>
+                                    <h4 class="font-bold text-slate-900">1. Jaringan Seluler (GPRS hingga 5G)</h4>
+                                    <span class="text-xs text-slate-500">Komunikasi Data Bergerak (Mobile Network)</span>
+                                </div>
+                            </div>
+                            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                                Memanfaatkan gelombang radio dari menara pemancar <strong>BTS</strong> (<em>Base Transceiver Station</em>) operator telekomunikasi. Dimulai dari teknologi <strong>GPRS</strong> (<em>General Packet Radio Service</em>), berkembang pesat menuju <strong>EDGE, 3G, 4G LTE</strong>, hingga kini mencapai generasi kelima (<strong>5G</strong>) untuk ponsel pintar.
+                            </p>
+                        </div>
+
+                        <!-- 2. Wi-Fi -->
+                        <div class="border border-slate-200 rounded-xl p-5 hover:border-indigo-400 transition">
+                            <div class="flex items-center gap-3 mb-3">
+                                <span class="bg-indigo-100 text-indigo-700 font-bold p-2.5 rounded-lg"><i class="fa-solid fa-wifi"></i></span>
+                                <div>
+                                    <h4 class="font-bold text-slate-900">2. Wi-Fi (Wireless Fidelity / WLAN)</h4>
+                                    <span class="text-xs text-slate-500">Standar IEEE 802.11 (Frekuensi $2.4\text{ GHz}$ & $5\text{ GHz}$)</span>
+                                </div>
+                            </div>
+                            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                                Teknologi jaringan lokal nirkabel yang memancarkan sinyal radio melalui perangkat <strong>Access Point</strong> atau <em>Wireless Router</em> (<em>Hotspot</em>). Sangat populer digunakan di rumah, sekolah, kafe, dan perkantoran dengan radius efektif sekitar $20 - 100\text{ meter}$.
+                            </p>
+                        </div>
+
+                        <!-- 3. Tethering & Bluetooth -->
+                        <div class="border border-slate-200 rounded-xl p-5 hover:border-indigo-400 transition">
+                            <div class="flex items-center gap-3 mb-3">
+                                <span class="bg-indigo-100 text-indigo-700 font-bold p-2.5 rounded-lg"><i class="fa-solid fa-mobile-screen-button"></i></span>
+                                <div>
+                                    <h4 class="font-bold text-slate-900">3. Tethering (Hotspot Pribadi) & Bluetooth</h4>
+                                    <span class="text-xs text-slate-500">Berbagi Koneksi Antar Perangkat Jarak Dekat</span>
+                                </div>
+                            </div>
+                            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                                <strong>Tethering</strong> adalah fitur menjadikan ponsel pintar sebagai modem/router portabel untuk membagikan koneksi internet selulernya ke perangkat lain (seperti laptop) melalui pancaran Wi-Fi, koneksi <strong>Bluetooth</strong> (PAN), atau kabel data USB.
+                            </p>
+                        </div>
+
+                        <!-- 4. Akses Satelit (VSAT) -->
+                        <div class="border border-slate-200 rounded-xl p-5 hover:border-indigo-400 transition">
+                            <div class="flex items-center gap-3 mb-3">
+                                <span class="bg-indigo-100 text-indigo-700 font-bold p-2.5 rounded-lg"><i class="fa-solid fa-satellite-dish"></i></span>
+                                <div>
+                                    <h4 class="font-bold text-slate-900">4. Akses Satelit (VSAT / LEO Satellite)</h4>
+                                    <span class="text-xs text-slate-500">Jangkauan Daerah Terpencil, Laut, dan Pegunungan</span>
+                                </div>
+                            </div>
+                            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                                Menggunakan antena parabola khusus (seperti VSAT atau satelit orbit rendah) yang mengirim dan menerima sinyal gelombang mikro langsung ke satelit di luar angkasa. Solusi terbaik untuk wilayah pedalaman, pulau terluar (3T), atau kapal di tengah laut yang tidak terjangkau kabel maupun sinyal BTS.
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <!-- Timeline Evolusi Jaringan Seluler -->
+                    <div class="bg-slate-50 rounded-xl p-6 border border-slate-200">
+                        <h4 class="font-bold text-slate-800 text-sm sm:text-base mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-chart-line text-indigo-600"></i> Evolusi Generasi Jaringan Seluler Nirkabel
+                        </h4>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+                            <div class="bg-white p-3.5 rounded-xl border border-slate-200 text-center">
+                                <span class="text-xs font-extrabold px-2 py-0.5 bg-slate-200 text-slate-700 rounded">1G</span>
+                                <div class="font-bold text-sm text-slate-800 mt-2">Analog Voice</div>
+                                <div class="text-[11px] text-slate-500 mt-1">Hanya panggilan suara analog ($2.4\text{ Kbps}$)</div>
+                            </div>
+                            <div class="bg-white p-3.5 rounded-xl border border-slate-200 text-center">
+                                <span class="text-xs font-extrabold px-2 py-0.5 bg-blue-100 text-blue-700 rounded">2G / GPRS</span>
+                                <div class="font-bold text-sm text-slate-800 mt-2">GSM & GPRS</div>
+                                <div class="text-[11px] text-slate-500 mt-1">SMS, MMS, internet dasar ($56 - 114\text{ Kbps}$)</div>
+                            </div>
+                            <div class="bg-white p-3.5 rounded-xl border border-slate-200 text-center">
+                                <span class="text-xs font-extrabold px-2 py-0.5 bg-cyan-100 text-cyan-700 rounded">2.75G</span>
+                                <div class="font-bold text-sm text-slate-800 mt-2">EDGE</div>
+                                <div class="text-[11px] text-slate-500 mt-1">Peningkatan GPRS hingga $384\text{ Kbps}$</div>
+                            </div>
+                            <div class="bg-white p-3.5 rounded-xl border border-slate-200 text-center">
+                                <span class="text-xs font-extrabold px-2 py-0.5 bg-teal-100 text-teal-700 rounded">3G / HSDPA</span>
+                                <div class="font-bold text-sm text-slate-800 mt-2">UMTS / HSPA</div>
+                                <div class="text-[11px] text-slate-500 mt-1">Video call & mobile browsing ($2 - 42\text{ Mbps}$)</div>
+                            </div>
+                            <div class="bg-white p-3.5 rounded-xl border border-indigo-200 text-center">
+                                <span class="text-xs font-extrabold px-2 py-0.5 bg-indigo-100 text-indigo-700 rounded">4G LTE</span>
+                                <div class="font-bold text-sm text-slate-800 mt-2">LTE-Advanced</div>
+                                <div class="text-[11px] text-slate-500 mt-1">Streaming HD & Game Online ($100\text{ Mbps} - 1\text{ Gbps}$)</div>
+                            </div>
+                            <div class="bg-indigo-600 text-white p-3.5 rounded-xl shadow-sm text-center">
+                                <span class="text-xs font-extrabold px-2 py-0.5 bg-white text-indigo-700 rounded">5G</span>
+                                <div class="font-bold text-sm mt-2">NR / IoT Era</div>
+                                <div class="text-[11px] text-indigo-100 mt-1">Latensi ultra-rendah, kecepatan hingga $10 - 20\text{ Gbps}$</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- BAGIAN 4: KUIS INTERAKTIF                  -->
+        <!-- ========================================== -->
+        <section id="kuis" class="scroll-mt-24">
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-200">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-amber-600 bg-amber-50 px-3 py-1 rounded-full">Uji Pemahaman Materi</span>
+                        <h2 class="text-2xl font-extrabold text-slate-900 mt-2">Latihan Soal Interaktif</h2>
+                        <p class="text-sm text-slate-600">Pilih jawaban yang paling tepat untuk menguji pemahamanmu tentang Jaringan Lokal dan Internet.</p>
+                    </div>
+                    <button onclick="resetQuiz()" class="self-start sm:self-center text-xs font-bold text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 px-4 py-2.5 rounded-xl transition flex items-center gap-2">
+                        <i class="fa-solid fa-rotate-right"></i> Ulangi Kuis
+                    </button>
+                </div>
+
+                <div class="space-y-6 mt-6" id="quiz-container">
+                    <!-- Soal 1 -->
+                    <div class="p-5 rounded-xl bg-slate-50 border border-slate-200" data-question="1">
+                        <p class="font-bold text-slate-800 text-sm sm:text-base mb-3">
+                            1. Jaringan komputer yang menghubungkan komputer-komputer di dalam satu ruang laboratorium sekolah disebut...
+                        </p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-sm">
+                            <button onclick="checkAnswer(1, 'A', true, this)" class="quiz-btn text-left p-3 rounded-lg bg-white border border-slate-200 hover:border-blue-500 transition font-medium">A. LAN (Local Area Network)</button>
+                            <button onclick="checkAnswer(1, 'B', false, this)" class="quiz-btn text-left p-3 rounded-lg bg-white border border-slate-200 hover:border-blue-500 transition font-medium">B. MAN (Metropolitan Area Network)</button>
+                            <button onclick="checkAnswer(1, 'C', false, this)" class="quiz-btn text-left p-3 rounded-lg bg-white border border-slate-200 hover:border-blue-500 transition font-medium">C. WAN (Wide Area Network)</button>
+                            <button onclick="checkAnswer(1, 'D', false, this)" class="quiz-btn text-left p-3 rounded-lg bg-white border border-slate-200 hover:border-blue-500 transition font-medium">D. Internet Global</button>
+                        </div>
+                        <p id="feedback-1" class="text-xs font-semibold mt-3 hidden"></p>
+                    </div>
+
+                    <!-- Soal 2 -->
+                    <div class="p-5 rounded-xl bg-slate-50 border border-slate-200" data-question="2">
+                        <p class="font-bold text-slate-800 text-sm sm:text-base mb-3">
+                            2. Teknologi konektivitas internet berkabel yang menggunakan serat kaca murni dan mentransmisikan data menggunakan gelombang cahaya adalah...
+                        </p>
+    <!-- Script untuk Kuis Interaktif & Mode Tema -->
+    <script>
+        // Inisialisasi Mode Terang / Gelap
+        function applyTheme(isDark) {
+            const htmlEl = document.documentElement;
+            const themeIcon = document.getElementById('theme-icon');
+            const themeText = document.getElementById('theme-text');
+
+            if (isDark) {
+                htmlEl.classList.add('dark');
+                if (themeIcon) {
+                    themeIcon.className = 'fa-solid fa-sun text-amber-400 text-sm';
+                }
+                if (themeText) {
+                    themeText.textContent = 'Mode Terang';
+                }
+            } else {
+                htmlEl.classList.remove('dark');
+                if (themeIcon) {
+                    themeIcon.className = 'fa-solid fa-moon text-indigo-600 text-sm';
+                }
+                if (themeText) {
+                    themeText.textContent = 'Mode Gelap';
+                }
+            }
+        }
+
+        function toggleTheme() {
+            const isDark = !document.documentElement.classList.contains('dark');
+            localStorage.setItem('theme_preference', isDark ? 'dark' : 'light');
+            applyTheme(isDark);
+        }
+
+        // Cek preferensi tersimpan saat halaman dimuat
+        (function initTheme() {
+            const savedTheme = localStorage.getItem('theme_preference');
+            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+                applyTheme(true);
+            } else {
+                applyTheme(false);
+            }
+        })();
+
+        function checkAnswer(questionId, choice, isCorrect, btnElement) {
+            const questionCard = document.querySelector(`[data-question="${questionId}"]`);
+            const allButtons = questionCard.querySelectorAll('.quiz-btn');
+            const feedback = document.getElementById(`feedback-${questionId}`);
+
+            // Reset state pada soal tersebut
+            allButtons.forEach(btn => {
+                btn.classList.remove('bg-emerald-100', 'border-emerald-500', 'text-emerald-900', 'bg-rose-100', 'border-rose-500', 'text-rose-900');
+                btn.classList.add('bg-white', 'border-slate-200');
+            });
+
+            feedback.classList.remove('hidden', 'text-emerald-700', 'text-rose-600');
+
+            if (isCorrect) {
+                btnElement.classList.remove('bg-white', 'border-slate-200');
+                btnElement.classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-900');
+                feedback.textContent = "✓ Jawaban Benar! Kamu telah memahami konsep ini dengan sangat baik.";
+                feedback.classList.add('text-emerald-700');
+            } else {
+                btnElement.classList.remove('bg-white', 'border-slate-200');
+                btnElement.classList.add('bg-rose-100', 'border-rose-500', 'text-rose-900');
+                feedback.textContent = "✕ Jawaban kurang tepat. Coba perhatikan kembali materi di atas dan pilih opsi lainnya.";
+                feedback.classList.add('text-rose-600');
+            }
+        }
+
+        function resetQuiz() {
+            const allButtons = document.querySelectorAll('.quiz-btn');
+            allButtons.forEach(btn => {
+                btn.classList.remove('bg-emerald-100', 'border-emerald-500', 'text-emerald-900', 'bg-rose-100', 'border-rose-500', 'text-rose-900');
+                btn.classList.add('bg-white', 'border-slate-200');
+            });
+            for (let i = 1; i <= 3; i++) {
+                const fb = document.getElementById(`feedback-${i}`);
+                if (fb) fb.classList.add('hidden');
+            }
+        }
+    </script>
+</body>
+</html>
