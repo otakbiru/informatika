@@ -1,0 +1,2368 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modul Lengkap & Simulasi Interaktif Mail Merge Microsoft Word</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        word: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#2b579a',
+                            600: '#185abd',
+                            700: '#103f91',
+                            800: '#0c2e6b',
+                            900: '#071d44',
+                        },
+                        excel: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            600: '#107c41',
+                            700: '#0b5a2e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom styles for realistic Word paper and Merge Fields */
+        .word-paper {
+            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.12), 0 4px 12px -2px rgba(0, 0, 0, 0.06);
+        }
+        .merge-token {
+            transition: all 0.2s ease;
+            border-radius: 0.25rem;
+            padding: 0.05rem 0.3rem;
+        }
+        .merge-token-highlight {
+            background-color: #cbd5e1;
+            color: #0f172a;
+            font-weight: 600;
+            box-shadow: inset 0 0 0 1px #94a3b8;
+        }
+        .dark .merge-token-highlight {
+            background-color: #334155;
+            color: #f8fafc;
+            box-shadow: inset 0 0 0 1px #64748b;
+        }
+        .merge-code {
+            background-color: #fef3c7;
+            color: #92400e;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.82em;
+            padding: 0.1rem 0.35rem;
+            border: 1px dashed #f59e0b;
+            border-radius: 0.25rem;
+        }
+        .dark .merge-code {
+            background-color: #451a03;
+            color: #fde68a;
+            border-color: #d97706;
+        }
+        .merge-preview-active {
+            background-color: #dbeafe;
+            color: #1e40af;
+            font-weight: 600;
+            border-bottom: 2px solid #3b82f6;
+        }
+        .dark .merge-preview-active {
+            background-color: #1e3a8a;
+            color: #bfdbfe;
+            border-bottom: 2px solid #60a5fa;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .dark ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 font-sans antialiased selection:bg-word-600 selection:text-white transition-colors duration-200">
+
+    <!-- Toast Notification Container (No alert() used) -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- Top Navigation Bar -->
+    <header class="sticky top-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Brand Title -->
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-word-600 to-word-800 flex items-center justify-center text-white shadow-md shadow-word-600/20">
+                        <i class="fa-solid fa-file-word text-xl"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-word-600 dark:text-blue-400 block">Modul Terpadu Microsoft Office</span>
+                        <h1 class="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white leading-tight">Panduan Lengkap Mail Merge</h1>
+                    </div>
+                </div>
+
+                <!-- Quick Jump Desktop Nav -->
+                <nav class="hidden xl:flex items-center gap-1 text-xs font-semibold text-slate-600 dark:text-slate-300">
+                    <a href="#pengertian" class="px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-word-600 dark:hover:text-blue-400 transition">1. Pengertian</a>
+                    <a href="#komponen" class="px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-word-600 dark:hover:text-blue-400 transition">2. Komponen</a>
+                    <a href="#jenis-dokumen" class="px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-word-600 dark:hover:text-blue-400 transition">3. Jenis Dokumen</a>
+                    <a href="#tab-mailings" class="px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-word-600 dark:hover:text-blue-400 transition">4. Tab Mailings</a>
+                    <a href="#langkah-kerja" class="px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-word-600 dark:hover:text-blue-400 transition">5. Langkah Kerja</a>
+                    <a href="#simulasi-kasus" class="px-3 py-2 rounded-lg bg-word-50 dark:bg-blue-950/60 text-word-600 dark:text-blue-400 border border-word-100 dark:border-blue-800/60 transition"><i class="fa-solid fa-bolt mr-1"></i>6. Simulasi & Contoh</a>
+                    <a href="#troubleshooting" class="px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-word-600 dark:hover:text-blue-400 transition">7. Picture Switch</a>
+                </nav>
+
+                <!-- Action Buttons -->
+                <div class="flex items-center gap-2">
+                    <button id="theme-toggle" onclick="toggleDarkMode()" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition" title="Ubah Tema Terang/Gelap">
+                        <i id="theme-icon" class="fa-solid fa-moon text-sm"></i>
+                    </button>
+                    <button onclick="toggleMobileMenu()" class="xl:hidden p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition" aria-label="Menu Navigasi">
+                        <i class="fa-solid fa-bars text-sm"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Dropdown Nav -->
+        <div id="mobile-menu" class="hidden xl:hidden border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3 space-y-1 text-sm font-medium">
+            <a href="#pengertian" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">1. Pengertian, Fungsi & Manfaat</a>
+            <a href="#komponen" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">2. Komponen Utama (Field vs Record)</a>
+            <a href="#jenis-dokumen" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">3. Jenis Dokumen Start Mail Merge</a>
+            <a href="#tab-mailings" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">4. Panduan Menu & Ikon Tab Mailings</a>
+            <a href="#langkah-kerja" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">5. Langkah Pembuatan (Excel & Word)</a>
+            <a href="#simulasi-kasus" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-word-600 dark:text-blue-400 font-bold">6. Contoh Kasus & Simulasi Interaktif</a>
+            <a href="#troubleshooting" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">7. Troubleshooting & Picture Switch</a>
+            <a href="#kuis" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">8. Evaluasi Pemahaman</a>
+        </div>
+    </header>
+
+    <!-- Hero Banner -->
+    <section class="relative overflow-hidden bg-gradient-to-br from-word-800 via-word-700 to-slate-900 text-white py-12 sm:py-16 border-b border-word-900">
+        <div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 24px 24px;"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                <div class="lg:col-span-7 space-y-5">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-xs font-semibold tracking-wide text-blue-200">
+                        <i class="fa-solid fa-wand-magic-sparkles text-amber-300"></i>
+                        OTOMATISASI DOKUMEN PERKANTORAN & ADMINISTRASI
+                    </div>
+                    <h2 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight">
+                        Kuasai <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-200 via-white to-emerald-300">Mail Merge</span> di Microsoft Word Secara Menyeluruh
+                    </h2>
+                    <p class="text-blue-100/90 text-base sm:text-lg leading-relaxed max-w-2xl">
+                        Pelajari konsep penggabungan dokumen massal mulai dari struktur basis data <strong>Field & Record</strong>, bedah tuntas seluruh ikon <strong>Tab Mailings</strong>, simulasi langsung pembuatan <strong>Surat Resmi & Label Undangan</strong>, hingga teknik tingkat lanjut memformat Tanggal serta Rupiah dengan <strong>Picture Switch</strong>.
+                    </p>
+                    <div class="flex flex-wrap gap-3 pt-2">
+                        <a href="#simulasi-kasus" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white text-word-800 font-bold text-sm shadow-lg hover:bg-blue-50 transition">
+                            <i class="fa-solid fa-play text-word-600"></i> Coba Simulasi Interaktif
+                        </a>
+                        <a href="#pengertian" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-sm border border-white/20 transition">
+                            <i class="fa-solid fa-book-open"></i> Pelajari Materi Lengkap
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Hero Visual Diagram Card -->
+                <div class="lg:col-span-5">
+                    <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-5 shadow-2xl space-y-4">
+                        <div class="text-xs font-bold uppercase tracking-wider text-blue-200 flex items-center justify-between">
+                            <span>Skema Cara Kerja Mail Merge</span>
+                            <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">Otomatis 100%</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <!-- Main Doc Card -->
+                            <div class="bg-slate-900/70 border border-blue-400/30 rounded-xl p-3.5">
+                                <div class="flex items-center gap-2 text-blue-300 font-bold text-xs mb-2">
+                                    <i class="fa-solid fa-file-word text-base"></i> 1. Main Document
+                                </div>
+                                <div class="text-[11px] text-slate-300 space-y-1 font-mono bg-slate-950/60 p-2 rounded-lg border border-slate-800">
+                                    <div>Kepada Yth.</div>
+                                    <div class="text-amber-300 font-semibold">«Nama_Penerima»</div>
+                                    <div class="text-amber-300">«Jabatan»</div>
+                                    <div>di <span class="text-amber-300">«Kota»</span></div>
+                                </div>
+                            </div>
+                            <!-- Data Source Card -->
+                            <div class="bg-slate-900/70 border border-emerald-400/30 rounded-xl p-3.5">
+                                <div class="flex items-center gap-2 text-emerald-300 font-bold text-xs mb-2">
+                                    <i class="fa-solid fa-file-excel text-base"></i> 2. Data Source
+                                </div>
+                                <div class="text-[10px] text-slate-300 font-mono bg-slate-950/60 p-2 rounded-lg border border-slate-800 overflow-hidden">
+                                    <div class="grid grid-cols-2 border-b border-slate-700 pb-1 font-bold text-emerald-400">
+                                        <span>Nama</span><span>Kota</span>
+                                    </div>
+                                    <div class="grid grid-cols-2 py-0.5 border-b border-slate-800">
+                                        <span>Budi S.</span><span>Jakarta</span>
+                                    </div>
+                                    <div class="grid grid-cols-2 py-0.5 border-b border-slate-800">
+                                        <span>Siti A.</span><span>Bandung</span>
+                                    </div>
+                                    <div class="grid grid-cols-2 pt-0.5">
+                                        <span>Andi W.</span><span>Surabaya</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Arrow & Output -->
+                        <div class="flex items-center justify-center text-amber-300 text-xs font-bold gap-2">
+                            <span class="h-px flex-1 bg-white/20"></span>
+                            <span><i class="fa-solid fa-gears mr-1"></i> DIGABUNGKAN MENJADI</span>
+                            <span class="h-px flex-1 bg-white/20"></span>
+                        </div>
+                        <div class="bg-gradient-to-r from-blue-600/40 to-emerald-600/40 border border-white/25 rounded-xl p-3 flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-lg bg-white text-word-700 flex items-center justify-center font-extrabold shadow">
+                                    <i class="fa-solid fa-layer-group"></i>
+                                </div>
+                                <div>
+                                    <div class="text-xs font-bold text-white">Ratusan Dokumen Personal Siap Cetak</div>
+                                    <div class="text-[11px] text-blue-100">Surat Resmi • Sertifikat • Slip Gaji • Label Amplop</div>
+                                </div>
+                            </div>
+                            <span class="text-xs font-mono bg-white/20 px-2.5 py-1 rounded-lg font-semibold">Halaman 1..N</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-16">
+
+        <!-- =====================================================================
+             BAGIAN 1: PENGERTIAN, FUNGSI UTAMA, DAN MANFAAT MAIL MERGE
+        ====================================================================== -->
+        <section id="pengertian" class="scroll-mt-20 space-y-6">
+            <div class="flex items-center gap-3 border-b border-slate-200 dark:border-slate-800 pb-4">
+                <span class="w-9 h-9 rounded-xl bg-word-600 text-white font-extrabold flex items-center justify-center text-sm shadow">01</span>
+                <div>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">Pengertian, Fungsi Utama, dan Manfaat Mail Merge</h2>
+                    <p class="text-sm text-slate-500 dark:text-slate-400">Konsep dasar pembuatan dokumen massal dinamis pada Microsoft Word</p>
+                </div>
+            </div>
+
+            <!-- Definition Box -->
+            <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+                <div class="flex flex-col md:flex-row gap-6 items-start">
+                    <div class="w-14 h-14 rounded-2xl bg-word-50 dark:bg-blue-950/80 border border-word-100 dark:border-blue-800 flex items-center justify-center text-word-600 dark:text-blue-400 shrink-0">
+                        <i class="fa-solid fa-envelope-open-text text-2xl"></i>
+                    </div>
+                    <div class="space-y-3">
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white">Apa itu Mail Merge?</h3>
+                        <p class="text-slate-600 dark:text-slate-300 leading-relaxed">
+                            <strong>Mail Merge (Surat Massal)</strong> adalah fitur otomatisasi di Microsoft Word yang berfungsi untuk menghasilkan banyak dokumen sekaligus dengan cara menggabungkan <strong>satu templat naskah utama (Main Document)</strong> dengan <strong>satu basis data penerima (Data Source)</strong>. Di dalam naskah utama, bagian yang bersifat tetap (seperti isi surat, kop, atau desain sertifikat) hanya diketik satu kali, sedangkan bagian yang berubah-ubah untuk setiap penerima (seperti <em>Nama, Nomor Surat, Jabatan, Alamat,</em> atau <em>Nominal Gaji</em>) diwakili oleh penanda variabel yang disebut <strong>Merge Field</strong>.
+                        </p>
+                        <div class="p-4 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 text-amber-900 dark:text-amber-200 text-sm flex gap-3 items-start">
+                            <i class="fa-solid fa-lightbulb text-amber-500 mt-0.5 text-base"></i>
+                            <div>
+                                <strong>Analogi Sederhana:</strong> Bayangkan Anda mencetak 500 undangan pernikahan. Isi undangannya 100% sama, namun nama dan alamat tamu di setiap undangan berbeda. Daripada mengetik ulang atau melakukan <em>Copy-Paste</em> sebanyak 500 kali, Mail Merge akan menarik daftar 500 nama dari tabel Microsoft Excel dan mencetaknya secara otomatis ke posisi yang tepat di setiap halaman Word.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fungsi Utama & Manfaat Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+                <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:border-word-500 transition">
+                    <div class="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/40 text-word-600 dark:text-blue-400 flex items-center justify-center mb-3">
+                        <i class="fa-solid fa-stopwatch text-lg"></i>
+                    </div>
+                    <h4 class="font-bold text-slate-900 dark:text-white mb-1.5">1. Efisiensi Waktu & Tenaga</h4>
+                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                        Memangkas waktu pembuatan ratusan hingga ribuan dokumen dari hitungan hari menjadi hanya beberapa menit tanpa proses salin-tempel (<em>copy-paste</em>) manual.
+                    </p>
+                </div>
+
+                <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:border-emerald-500 transition">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-900/40 text-excel-600 dark:text-emerald-400 flex items-center justify-center mb-3">
+                        <i class="fa-solid fa-shield-check text-lg"></i>
+                    </div>
+                    <h4 class="font-bold text-slate-900 dark:text-white mb-1.5">2. Akurasi Data Tinggi</h4>
+                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                        Menghindari kesalahan manusia (<em>human error</em>) seperti salah ketik nama gelar, tertukarnya jabatan dengan instansi, atau terlewatnya urutan penerima.
+                    </p>
+                </div>
+
+                <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:border-purple-500 transition">
+                    <div class="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400 flex items-center justify-center mb-3">
+                        <i class="fa-solid fa-ruler-combined text-lg"></i>
+                    </div>
+                    <h4 class="font-bold text-slate-900 dark:text-white mb-1.5">3. Konsistensi Tata Letak</h4>
+                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                        Menjamin seluruh halaman dokumen memiliki margin, ukuran huruf, spasi paragraf, dan posisi tanda tangan yang seragam karena berasal dari satu dokumen induk.
+                    </p>
+                </div>
+
+                <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:border-amber-500 transition">
+                    <div class="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 flex items-center justify-center mb-3">
+                        <i class="fa-solid fa-database text-lg"></i>
+                    </div>
+                    <h4 class="font-bold text-slate-900 dark:text-white mb-1.5">4. Pemisahan Data & Desain</h4>
+                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                        Satu file Excel sumber data yang sama dapat digunakan berulang kali untuk berbagai templat dokumen (misal: untuk Surat Undangan, Label Amplop, dan Sertifikat).
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             BAGIAN 2: KOMPONEN UTAMA MAIL MERGE & VISUALISASI FIELD VS RECORD
+        ====================================================================== -->
+        <section id="komponen" class="scroll-mt-20 space-y-6">
+            <div class="flex items-center gap-3 border-b border-slate-200 dark:border-slate-800 pb-4">
+                <span class="w-9 h-9 rounded-xl bg-word-600 text-white font-extrabold flex items-center justify-center text-sm shadow">02</span>
+                <div>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">Komponen Utama Mail Merge & Anatomi Data</h2>
+                    <p class="text-sm text-slate-500 dark:text-slate-400">Memahami hubungan antara Main Document, Data Source, Field (Kolom), dan Record (Baris)</p>
+                </div>
+            </div>
+
+            <!-- 2 Core Files Explanation -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Komponen 1: Main Document -->
+                <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 border-2 border-word-500/30 dark:border-blue-500/30 shadow-sm space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-11 h-11 rounded-xl bg-word-600 text-white flex items-center justify-center shadow">
+                                <i class="fa-solid fa-file-word text-xl"></i>
+                            </div>
+                            <div>
+                                <span class="text-xs font-bold uppercase tracking-wider text-word-600 dark:text-blue-400">Komponen Pertama</span>
+                                <h3 class="text-lg font-extrabold text-slate-900 dark:text-white">1. Main Document (Dokumen Utama)</h3>
+                            </div>
+                        </div>
+                        <span class="text-xs font-mono px-2.5 py-1 rounded-md bg-blue-50 dark:bg-blue-950 text-word-600 dark:text-blue-300 font-semibold">.docx</span>
+                    </div>
+                    <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                        <strong>Main Document</strong> adalah file Microsoft Word yang menjadi kerangka atau naskah induk. Di dalam dokumen ini terdapat dua jenis elemen:
+                    </p>
+                    <ul class="space-y-2 text-sm text-slate-600 dark:text-slate-300">
+                        <li class="flex items-start gap-2.5">
+                            <i class="fa-solid fa-circle-check text-word-600 dark:text-blue-400 mt-1"></i>
+                            <span><strong>Teks & Objek Statis (Tetap):</strong> Kop surat, logo instansi, paragraf pembuka, isi pemberitahuan, hingga tanda tangan pengirim yang tampil sama persis di setiap lembar.</span>
+                        </li>
+                        <li class="flex items-start gap-2.5">
+                            <i class="fa-solid fa-circle-check text-word-600 dark:text-blue-400 mt-1"></i>
+                            <span><strong>Merge Field (Penanda Variabel Dinamis):</strong> Kode khusus berapit tanda kutip sudut ganda seperti <code class="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 font-mono text-xs">«Nama_Lengkap»</code> atau <code class="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 font-mono text-xs">«Alamat»</code> yang menjadi tempat masuknya data dari sumber data.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Komponen 2: Data Source -->
+                <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 border-2 border-excel-600/30 dark:border-emerald-500/30 shadow-sm space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-11 h-11 rounded-xl bg-excel-600 text-white flex items-center justify-center shadow">
+                                <i class="fa-solid fa-file-excel text-xl"></i>
+                            </div>
+                            <div>
+                                <span class="text-xs font-bold uppercase tracking-wider text-excel-600 dark:text-emerald-400">Komponen Kedua</span>
+                                <h3 class="text-lg font-extrabold text-slate-900 dark:text-white">2. Data Source (Sumber Data)</h3>
+                            </div>
+                        </div>
+                        <span class="text-xs font-mono px-2.5 py-1 rounded-md bg-emerald-50 dark:bg-emerald-950 text-excel-600 dark:text-emerald-300 font-semibold">.xlsx / .accdb / .csv</span>
+                    </div>
+                    <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                        <strong>Data Source</strong> adalah file terpisah yang menyimpan daftar rincian informasi penerima yang disusun secara terstruktur dalam bentuk tabel (baris dan kolom). Format yang didukung meliputi:
+                    </p>
+                    <ul class="space-y-2 text-sm text-slate-600 dark:text-slate-300">
+                        <li class="flex items-start gap-2.5">
+                            <i class="fa-solid fa-circle-check text-excel-600 dark:text-emerald-400 mt-1"></i>
+                            <span><strong>Microsoft Excel (.xlsx / .xls):</strong> Sumber data paling populer karena mudah diolah, mendukung rumus, dan menampung ribuan data dengan rapi.</span>
+                        </li>
+                        <li class="flex items-start gap-2.5">
+                            <i class="fa-solid fa-circle-check text-excel-600 dark:text-emerald-400 mt-1"></i>
+                            <span><strong>Sumber Lainnya:</strong> Basis data Microsoft Access (<code>.accdb</code> / <code>.mdb</code>), Daftar Kontak Microsoft Outlook, file teks terpisah koma (<code>.csv</code>), atau tabel di dalam dokumen Word.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Interactive Visualizer: FIELD (Kolom) vs RECORD (Baris) -->
+            <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
+                    <div>
+                        <span class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-purple-600 dark:text-purple-400">
+                            <i class="fa-solid fa-hand-pointer"></i> Visualisasi Interaktif
+                        </span>
+                        <h3 class="text-xl font-extrabold text-slate-900 dark:text-white">Perbedaan Field (Kolom) dan Record (Baris) pada Tabel Sumber Data</h3>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">Klik tombol di bawah atau klik langsung pada judul kolom / baris tabel untuk melihat perbedaannya secara visual.</p>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="highlightAnatomy('field')" id="btn-anat-field" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-blue-600 text-white shadow-sm hover:bg-blue-700 transition">
+                            <i class="fa-solid fa-table-columns mr-1"></i> Sorot FIELD (Kolom)
+                        </button>
+                        <button onclick="highlightAnatomy('record')" id="btn-anat-record" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-600 text-white shadow-sm hover:bg-emerald-700 transition">
+                            <i class="fa-solid fa-bars-staggered mr-1"></i> Sorot RECORD (Baris)
+                        </button>
+                        <button onclick="highlightAnatomy('header')" id="btn-anat-header" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-amber-500 text-white shadow-sm hover:bg-amber-600 transition">
+                            <i class="fa-solid fa-heading mr-1"></i> Sorot HEADER ROW
+                        </button>
+                        <button onclick="highlightAnatomy('reset')" class="px-3 py-2 rounded-xl text-xs font-semibold bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-300 transition">
+                            Reset
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Explanation Callout Dynamic -->
+                <div id="anatomy-info-box" class="p-4 rounded-xl bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-800 text-sm text-slate-700 dark:text-slate-200 transition-all">
+                    <div class="font-bold text-word-600 dark:text-blue-400 mb-1"><i class="fa-solid fa-circle-info mr-1.5"></i> Panduan Interaktif Struktur Tabel:</div>
+                    Pilih salah satu tombol di atas (<strong>Sorot FIELD</strong>, <strong>Sorot RECORD</strong>, atau <strong>Sorot HEADER ROW</strong>) untuk memahami bagaimana Microsoft Word menerjemahkan tabel Excel menjadi dokumen individual.
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                    <!-- Table Visual -->
+                    <div class="lg:col-span-8 overflow-x-auto rounded-xl border border-slate-300 dark:border-slate-700 shadow-inner">
+                        <table class="w-full text-left border-collapse text-xs sm:text-sm">
+                            <thead>
+                                <tr id="anat-row-header" class="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-b-2 border-slate-300 dark:border-slate-600 transition-colors">
+                                    <th class="py-2.5 px-3 border-r border-slate-300 dark:border-slate-700 w-10 text-center font-mono text-xs text-slate-400">Baris 1</th>
+                                    <th onclick="highlightSpecificField(1)" class="anat-col-1 py-2.5 px-3 border-r border-slate-300 dark:border-slate-700 cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-900/40 transition font-mono">
+                                        <span class="block text-[10px] uppercase text-word-600 dark:text-blue-400 font-sans font-bold">Field 1 (Kolom A)</span>
+                                        Nomor_Surat
+                                    </th>
+                                    <th onclick="highlightSpecificField(2)" class="anat-col-2 py-2.5 px-3 border-r border-slate-300 dark:border-slate-700 cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-900/40 transition font-mono">
+                                        <span class="block text-[10px] uppercase text-word-600 dark:text-blue-400 font-sans font-bold">Field 2 (Kolom B)</span>
+                                        Nama_Penerima
+                                    </th>
+                                    <th onclick="highlightSpecificField(3)" class="anat-col-3 py-2.5 px-3 border-r border-slate-300 dark:border-slate-700 cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-900/40 transition font-mono">
+                                        <span class="block text-[10px] uppercase text-word-600 dark:text-blue-400 font-sans font-bold">Field 3 (Kolom C)</span>
+                                        Jabatan
+                                    </th>
+                                    <th onclick="highlightSpecificField(4)" class="anat-col-4 py-2.5 px-3 cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-900/40 transition font-mono">
+                                        <span class="block text-[10px] uppercase text-word-600 dark:text-blue-400 font-sans font-bold">Field 4 (Kolom D)</span>
+                                        Kota
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-200 dark:divide-slate-800 bg-white dark:bg-slate-900">
+                                <tr onclick="highlightSpecificRecord(1)" id="anat-rec-1" class="anat-record-row cursor-pointer hover:bg-emerald-50/70 dark:hover:bg-emerald-950/30 transition">
+                                    <td class="py-2.5 px-3 border-r border-slate-200 dark:border-slate-800 text-center font-mono text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-slate-50 dark:bg-slate-800/60">Record 1</td>
+                                    <td class="anat-col-1 py-2.5 px-3 border-r border-slate-200 dark:border-slate-800 font-mono">001/UND/XI/2026</td>
+                                    <td class="anat-col-2 py-2.5 px-3 border-r border-slate-200 dark:border-slate-800 font-semibold">Dr. Budi Santoso, M.Kom.</td>
+                                    <td class="anat-col-3 py-2.5 px-3 border-r border-slate-200 dark:border-slate-800">Kepala Dinas Pendidikan</td>
+                                    <td class="anat-col-4 py-2.5 px-3">Jakarta Pusat</td>
+                                </tr>
+                                <tr onclick="highlightSpecificRecord(2)" id="anat-rec-2" class="anat-record-row cursor-pointer hover:bg-emerald-50/70 dark:hover:bg-emerald-950/30 transition">
+                                    <td class="py-2.5 px-3 border-r border-slate-200 dark:border-slate-800 text-center font-mono text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-slate-50 dark:bg-slate-800/60">Record 2</td>
+                                    <td class="anat-col-1 py-2.5 px-3 border-r border-slate-200 dark:border-slate-800 font-mono">002/UND/XI/2026</td>
+                                    <td class="anat-col-2 py-2.5 px-3 border-r border-slate-200 dark:border-slate-800 font-semibold">Ir. Siti Aminah, M.T.</td>
+                                    <td class="anat-col-3 py-2.5 px-3 border-r border-slate-200 dark:border-slate-800">Direktur Operasional</td>
+                                    <td class="anat-col-4 py-2.5 px-3">Kota Bandung</td>
+                                </tr>
+                                <tr onclick="highlightSpecificRecord(3)" id="anat-rec-3" class="anat-record-row cursor-pointer hover:bg-emerald-50/70 dark:hover:bg-emerald-950/30 transition">
+                                    <td class="py-2.5 px-3 border-r border-slate-200 dark:border-slate-800 text-center font-mono text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-slate-50 dark:bg-slate-800/60">Record 3</td>
+                                    <td class="anat-col-1 py-2.5 px-3 border-r border-slate-200 dark:border-slate-800 font-mono">003/UND/XI/2026</td>
+                                    <td class="anat-col-2 py-2.5 px-3 border-r border-slate-200 dark:border-slate-800 font-semibold">Andi Wijaya, S.E., Ak.</td>
+                                    <td class="anat-col-3 py-2.5 px-3 border-r border-slate-200 dark:border-slate-800">Manajer Keuangan</td>
+                                    <td class="anat-col-4 py-2.5 px-3">Kota Surabaya</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Comparison Summary Cards -->
+                    <div class="lg:col-span-4 space-y-3">
+                        <div class="p-4 rounded-xl bg-blue-50/80 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800/70">
+                            <div class="flex items-center gap-2 font-bold text-word-600 dark:text-blue-400 text-sm mb-1">
+                                <i class="fa-solid fa-arrows-up-down"></i> Apa itu FIELD (Kolom)?
+                            </div>
+                            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                                <strong>Field</strong> adalah <strong>kolom vertikal</strong> yang mewakili satu kategori atau atribut informasi spesifik (contoh: kolom <code>Nama_Penerima</code> atau kolom <code>Kota</code>). Nama judul kolom pada baris pertama (<em>Header Row</em>) akan menjadi nama <strong>«Merge_Field»</strong> di Microsoft Word.
+                            </p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-emerald-50/80 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/70">
+                            <div class="flex items-center gap-2 font-bold text-excel-600 dark:text-emerald-400 text-sm mb-1">
+                                <i class="fa-solid fa-arrows-left-right"></i> Apa itu RECORD (Baris)?
+                            </div>
+                            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                                <strong>Record</strong> adalah <strong>baris horizontal</strong> yang memuat satu kumpulan data lengkap milik satu entitas/penerima utuh. Jika tabel memiliki <strong>3 Record</strong> data, maka Mail Merge (jenis <em>Letters</em>) akan menghasilkan <strong>3 halaman surat</strong>.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             BAGIAN 3: JENIS-JENIS DOKUMEN UTAMA PADA START MAIL MERGE
+        ====================================================================== -->
+        <section id="jenis-dokumen" class="scroll-mt-20 space-y-6">
+            <div class="flex items-center gap-3 border-b border-slate-200 dark:border-slate-800 pb-4">
+                <span class="w-9 h-9 rounded-xl bg-word-600 text-white font-extrabold flex items-center justify-center text-sm shadow">03</span>
+                <div>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">5 Jenis Dokumen Utama pada Start Mail Merge</h2>
+                    <p class="text-sm text-slate-500 dark:text-slate-400">Perbandingan fungsi, tata letak output, dan contoh penggunaan kelima mode dokumen utama</p>
+                </div>
+            </div>
+
+            <!-- 5 Interactive Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                <!-- 1. Letters -->
+                <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="w-11 h-11 rounded-xl bg-blue-100 dark:bg-blue-900/40 text-word-600 dark:text-blue-400 flex items-center justify-center mb-3">
+                            <i class="fa-solid fa-file-lines text-xl"></i>
+                        </div>
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-word-600 dark:text-blue-400">Mode 1</span>
+                        <h3 class="text-base font-extrabold text-slate-900 dark:text-white mt-0.5 mb-2">Letters (Surat)</h3>
+                        <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                            Membuat dokumen halaman penuh di mana setiap 1 <em>Record</em> data otomatis dipisahkan menjadi 1 halaman baru (melalui <em>Section Break</em>).
+                        </p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 text-[11px] font-semibold text-slate-500 dark:text-slate-400">
+                        <i class="fa-solid fa-tag mr-1 text-word-600"></i> Surat Undangan, Sertifikat, Kontrak, Slip Gaji
+                    </div>
+                </div>
+
+                <!-- 2. E-mail Messages -->
+                <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="w-11 h-11 rounded-xl bg-sky-100 dark:bg-sky-900/40 text-sky-600 dark:text-sky-400 flex items-center justify-center mb-3">
+                            <i class="fa-solid fa-paper-plane text-xl"></i>
+                        </div>
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-sky-600 dark:text-sky-400">Mode 2</span>
+                        <h3 class="text-base font-extrabold text-slate-900 dark:text-white mt-0.5 mb-2">E-mail Messages</h3>
+                        <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                            Mengirimkan dokumen langsung ke alamat surat elektronik masing-masing penerima melalui integrasi aplikasi Microsoft Outlook.
+                        </p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 text-[11px] font-semibold text-slate-500 dark:text-slate-400">
+                        <i class="fa-solid fa-tag mr-1 text-sky-600"></i> Tagihan Bulanan, Pengumuman Kelulusan, Newsletter
+                    </div>
+                </div>
+
+                <!-- 3. Envelopes -->
+                <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="w-11 h-11 rounded-xl bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 flex items-center justify-center mb-3">
+                            <i class="fa-solid fa-envelope text-xl"></i>
+                        </div>
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">Mode 3</span>
+                        <h3 class="text-base font-extrabold text-slate-900 dark:text-white mt-0.5 mb-2">Envelopes (Amplop)</h3>
+                        <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                            Mengatur ukuran kertas sesuai dimensi amplop standar (DL, C5, Monarch) dengan penempatan alamat pengirim dan alamat tujuan otomatis.
+                        </p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 text-[11px] font-semibold text-slate-500 dark:text-slate-400">
+                        <i class="fa-solid fa-tag mr-1 text-amber-600"></i> Amplop Surat Dinas, Amplop Berkas Lamaran/Klien
+                    </div>
+                </div>
+
+                <!-- 4. Labels -->
+                <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="w-11 h-11 rounded-xl bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-3">
+                            <i class="fa-solid fa-table-cells text-xl"></i>
+                        </div>
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Mode 4</span>
+                        <h3 class="text-base font-extrabold text-slate-900 dark:text-white mt-0.5 mb-2">Labels (Stiker Label)</h3>
+                        <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                            Membagi satu halaman menjadi banyak kotak stiker label (misal: 12 kotak per lembar) dan menyisipkan aturan <code>«Next Record»</code> antar kotak.
+                        </p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 text-[11px] font-semibold text-slate-500 dark:text-slate-400">
+                        <i class="fa-solid fa-tag mr-1 text-emerald-600"></i> Label Undangan (Tom & Jerry 103/121), Label Barcode
+                    </div>
+                </div>
+
+                <!-- 5. Directory -->
+                <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="w-11 h-11 rounded-xl bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400 flex items-center justify-center mb-3">
+                            <i class="fa-solid fa-address-book text-xl"></i>
+                        </div>
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-purple-600 dark:text-purple-400">Mode 5</span>
+                        <h3 class="text-base font-extrabold text-slate-900 dark:text-white mt-0.5 mb-2">Directory (Katalog)</h3>
+                        <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                            Menggabungkan seluruh baris data secara berurutan di halaman yang sama tanpa memutus halaman (tanpa <em>Page Break</em>).
+                        </p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 text-[11px] font-semibold text-slate-500 dark:text-slate-400">
+                        <i class="fa-solid fa-tag mr-1 text-purple-600"></i> Buku Direktori Kontak, Katalog Produk, Daftar Alumni
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Comparison Table -->
+            <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+                <div class="px-6 py-4 bg-slate-50 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                    <h3 class="font-bold text-slate-900 dark:text-white text-sm sm:text-base"><i class="fa-solid fa-table-list text-word-600 dark:text-blue-400 mr-2"></i>Tabel Perbandingan Teknis 5 Jenis Dokumen Utama</h3>
+                    <span class="text-xs text-slate-500">Tab Mailings &rarr; Start Mail Merge</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-xs sm:text-sm">
+                        <thead>
+                            <tr class="bg-slate-100/80 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-b border-slate-200 dark:border-slate-700">
+                                <th class="py-3.5 px-4 font-bold">Jenis Dokumen</th>
+                                <th class="py-3.5 px-4 font-bold">Fungsi Utama</th>
+                                <th class="py-3.5 px-4 font-bold">Format Output & Pergantian Record</th>
+                                <th class="py-3.5 px-4 font-bold">Kebutuhan Aturan «Next Record»</th>
+                                <th class="py-3.5 px-4 font-bold">Contoh Penggunaan Nyata</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
+                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40">
+                                <td class="py-3.5 px-4 font-bold text-word-600 dark:text-blue-400 whitespace-nowrap"><i class="fa-solid fa-file-lines mr-1.5"></i>Letters</td>
+                                <td class="py-3.5 px-4">Mencetak dokumen lembaran terpisah untuk setiap individu</td>
+                                <td class="py-3.5 px-4">1 Record = 1 Halaman/Bagian Baru (dipisahkan <em>Next Page Section Break</em>)</td>
+                                <td class="py-3.5 px-4"><span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-mono text-xs">Otomatis di akhir halaman</span></td>
+                                <td class="py-3.5 px-4">Surat resmi, piagam/sertifikat, SK kerja, slip gaji</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40">
+                                <td class="py-3.5 px-4 font-bold text-sky-600 dark:text-sky-400 whitespace-nowrap"><i class="fa-solid fa-paper-plane mr-1.5"></i>E-mail Messages</td>
+                                <td class="py-3.5 px-4">Mengirim pesan personal massal langsung ke inbox penerima</td>
+                                <td class="py-3.5 px-4">1 Record = 1 Email Individual (Format HTML atau Plain Text via Outlook)</td>
+                                <td class="py-3.5 px-4"><span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-mono text-xs">Otomatis per email</span></td>
+                                <td class="py-3.5 px-4">Pengumuman hasil seleksi, pemberitahuan tagihan pelanggan</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40">
+                                <td class="py-3.5 px-4 font-bold text-amber-600 dark:text-amber-400 whitespace-nowrap"><i class="fa-solid fa-envelope mr-1.5"></i>Envelopes</td>
+                                <td class="py-3.5 px-4">Mencetak identitas & alamat tujuan langsung di kertas amplop</td>
+                                <td class="py-3.5 px-4">1 Record = 1 Lembar Amplop sesuai dimensi yang dipilih</td>
+                                <td class="py-3.5 px-4"><span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-mono text-xs">Otomatis per amplop</span></td>
+                                <td class="py-3.5 px-4">Amplop surat undangan rapat, amplop pengiriman dokumen</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40">
+                                <td class="py-3.5 px-4 font-bold text-emerald-600 dark:text-emerald-400 whitespace-nowrap"><i class="fa-solid fa-table-cells mr-1.5"></i>Labels</td>
+                                <td class="py-3.5 px-4">Menyusun banyak penerima dalam satu lembar stiker label</td>
+                                <td class="py-3.5 px-4">Tabel grid mengikuti ukuran kertas label; 1 lembar memuat banyak Record</td>
+                                <td class="py-3.5 px-4"><span class="px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 font-mono text-xs font-bold">Wajib di kotak ke-2 dst.</span></td>
+                                <td class="py-3.5 px-4">Label stiker undangan pernikahan (Tom & Jerry No. 103/121)</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40">
+                                <td class="py-3.5 px-4 font-bold text-purple-600 dark:text-purple-400 whitespace-nowrap"><i class="fa-solid fa-address-book mr-1.5"></i>Directory</td>
+                                <td class="py-3.5 px-4">Merangkum daftar seluruh baris data secara berkesinambungan</td>
+                                <td class="py-3.5 px-4">Seluruh Record digabung berurutan dari atas ke bawah di halaman yang sama</td>
+                                <td class="py-3.5 px-4"><span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-mono text-xs">Otomatis menyambung</span></td>
+                                <td class="py-3.5 px-4">Katalog barang, daftar kontak pegawai, rekap biodata anggota</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             BAGIAN 4: PANDUAN LENGKAP MENU DAN IKON PADA TAB MAILINGS (INTERAKTIF)
+        ====================================================================== -->
+        <section id="tab-mailings" class="scroll-mt-20 space-y-6">
+            <div class="flex items-center gap-3 border-b border-slate-200 dark:border-slate-800 pb-4">
+                <span class="w-9 h-9 rounded-xl bg-word-600 text-white font-extrabold flex items-center justify-center text-sm shadow">04</span>
+                <div>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">Bedah Lengkap Menu dan Ikon pada Tab Mailings</h2>
+                    <p class="text-sm text-slate-500 dark:text-slate-400">Klik setiap tombol pada simulasi Ribbon Microsoft Word di bawah ini untuk melihat penjelasan fungsi dan sub-menunya</p>
+                </div>
+            </div>
+
+            <!-- Interactive Word Ribbon Simulator -->
+            <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-300 dark:border-slate-700 shadow-lg overflow-hidden">
+                <!-- Fake Word Top Bar -->
+                <div class="bg-word-700 text-white px-4 py-2 flex items-center justify-between text-xs">
+                    <div class="flex items-center gap-4">
+                        <span class="font-bold flex items-center gap-1.5"><i class="fa-solid fa-file-word"></i> Microsoft Word</span>
+                        <div class="hidden sm:flex items-center gap-1 text-blue-200">
+                            <span class="px-2 py-0.5">File</span>
+                            <span class="px-2 py-0.5">Home</span>
+                            <span class="px-2 py-0.5">Insert</span>
+                            <span class="px-2 py-0.5">Layout</span>
+                            <span class="px-3 py-1 bg-slate-100 text-word-800 font-bold rounded-t-md -mb-2 shadow">Mailings</span>
+                            <span class="px-2 py-0.5">Review</span>
+                            <span class="px-2 py-0.5">View</span>
+                        </div>
+                    </div>
+                    <span class="text-[11px] bg-white/15 px-2.5 py-0.5 rounded-full">Klik ikon di bawah untuk membaca detail fungsinya</span>
+                </div>
+
+                <!-- Ribbon Groups Bar -->
+                <div class="bg-slate-100 dark:bg-slate-800/90 p-3 border-b border-slate-300 dark:border-slate-700 overflow-x-auto">
+                    <div class="flex items-stretch gap-3 min-w-max">
+
+                        <!-- Group 1: Create -->
+                        <div class="bg-white dark:bg-slate-900 rounded-xl p-2.5 border border-slate-200 dark:border-slate-700 flex flex-col justify-between">
+                            <div class="flex items-center gap-1.5">
+                                <button onclick="inspectRibbon('envelopes')" id="rib-envelopes" class="rib-btn flex flex-col items-center justify-center p-2 rounded-lg hover:bg-blue-50 dark:hover:bg-slate-800 transition w-20">
+                                    <i class="fa-solid fa-envelope text-xl text-amber-600 mb-1"></i>
+                                    <span class="text-[11px] font-semibold leading-tight text-center">Envelopes</span>
+                                </button>
+                                <button onclick="inspectRibbon('labels')" id="rib-labels" class="rib-btn flex flex-col items-center justify-center p-2 rounded-lg hover:bg-blue-50 dark:hover:bg-slate-800 transition w-20">
+                                    <i class="fa-solid fa-tags text-xl text-emerald-600 mb-1"></i>
+                                    <span class="text-[11px] font-semibold leading-tight text-center">Labels</span>
+                                </button>
+                            </div>
+                            <div class="text-[10px] font-bold uppercase tracking-wider text-center text-slate-400 border-t border-slate-100 dark:border-slate-800 pt-1 mt-1">1. Create</div>
+                        </div>
+
+                        <!-- Group 2: Start Mail Merge -->
+                        <div class="bg-white dark:bg-slate-900 rounded-xl p-2.5 border-2 border-word-500/30 flex flex-col justify-between">
+                            <div class="flex items-center gap-1.5">
+                                <button onclick="inspectRibbon('start-merge')" id="rib-start-merge" class="rib-btn flex flex-col items-center justify-center p-2 rounded-lg bg-blue-50 dark:bg-blue-950/70 ring-2 ring-word-600 transition w-24">
+                                    <i class="fa-solid fa-envelopes-bulk text-xl text-word-600 dark:text-blue-400 mb-1"></i>
+                                    <span class="text-[11px] font-bold leading-tight text-center">Start Mail Merge <i class="fa-solid fa-caret-down text-[9px]"></i></span>
+                                </button>
+                                <button onclick="inspectRibbon('select-recipients')" id="rib-select-recipients" class="rib-btn flex flex-col items-center justify-center p-2 rounded-lg hover:bg-blue-50 dark:hover:bg-slate-800 transition w-24">
+                                    <i class="fa-solid fa-users-gear text-xl text-excel-600 dark:text-emerald-400 mb-1"></i>
+                                    <span class="text-[11px] font-semibold leading-tight text-center">Select Recipients <i class="fa-solid fa-caret-down text-[9px]"></i></span>
+                                </button>
+                                <button onclick="inspectRibbon('edit-recipients')" id="rib-edit-recipients" class="rib-btn flex flex-col items-center justify-center p-2 rounded-lg hover:bg-blue-50 dark:hover:bg-slate-800 transition w-24">
+                                    <i class="fa-solid fa-user-check text-xl text-purple-600 dark:text-purple-400 mb-1"></i>
+                                    <span class="text-[11px] font-semibold leading-tight text-center">Edit Recipient List</span>
+                                </button>
+                            </div>
+                            <div class="text-[10px] font-bold uppercase tracking-wider text-center text-word-600 dark:text-blue-400 border-t border-slate-100 dark:border-slate-800 pt-1 mt-1">2. Start Mail Merge</div>
+                        </div>
+
+                        <!-- Group 3: Write & Insert Fields -->
+                        <div class="bg-white dark:bg-slate-900 rounded-xl p-2.5 border border-slate-200 dark:border-slate-700 flex flex-col justify-between">
+                            <div class="flex items-center gap-1.5">
+                                <button onclick="inspectRibbon('highlight-fields')" id="rib-highlight-fields" class="rib-btn flex flex-col items-center justify-center p-2 rounded-lg hover:bg-blue-50 dark:hover:bg-slate-800 transition w-24">
+                                    <i class="fa-solid fa-highlighter text-xl text-amber-500 mb-1"></i>
+                                    <span class="text-[11px] font-semibold leading-tight text-center">Highlight Merge Fields</span>
+                                </button>
+                                <button onclick="inspectRibbon('address-block')" id="rib-address-block" class="rib-btn flex flex-col items-center justify-center p-2 rounded-lg hover:bg-blue-50 dark:hover:bg-slate-800 transition w-20">
+                                    <i class="fa-solid fa-address-card text-xl text-sky-600 mb-1"></i>
+                                    <span class="text-[11px] font-semibold leading-tight text-center">Address Block</span>
+                                </button>
+                                <button onclick="inspectRibbon('greeting-line')" id="rib-greeting-line" class="rib-btn flex flex-col items-center justify-center p-2 rounded-lg hover:bg-blue-50 dark:hover:bg-slate-800 transition w-20">
+                                    <i class="fa-solid fa-handshake text-xl text-indigo-600 mb-1"></i>
+                                    <span class="text-[11px] font-semibold leading-tight text-center">Greeting Line</span>
+                                </button>
+                                <button onclick="inspectRibbon('insert-field')" id="rib-insert-field" class="rib-btn flex flex-col items-center justify-center p-2 rounded-lg hover:bg-blue-50 dark:hover:bg-slate-800 transition w-24">
+                                    <i class="fa-solid fa-file-import text-xl text-word-600 dark:text-blue-400 mb-1"></i>
+                                    <span class="text-[11px] font-semibold leading-tight text-center">Insert Merge Field <i class="fa-solid fa-caret-down text-[9px]"></i></span>
+                                </button>
+                                <button onclick="inspectRibbon('rules')" id="rib-rules" class="rib-btn flex flex-col items-center justify-center p-2 rounded-lg hover:bg-blue-50 dark:hover:bg-slate-800 transition w-20">
+                                    <i class="fa-solid fa-code-branch text-xl text-rose-600 mb-1"></i>
+                                    <span class="text-[11px] font-semibold leading-tight text-center">Rules <i class="fa-solid fa-caret-down text-[9px]"></i></span>
+                                </button>
+                            </div>
+                            <div class="text-[10px] font-bold uppercase tracking-wider text-center text-slate-400 border-t border-slate-100 dark:border-slate-800 pt-1 mt-1">3. Write & Insert Fields</div>
+                        </div>
+
+                        <!-- Group 4: Preview Results -->
+                        <div class="bg-white dark:bg-slate-900 rounded-xl p-2.5 border border-slate-200 dark:border-slate-700 flex flex-col justify-between">
+                            <div class="flex items-center gap-1.5">
+                                <button onclick="inspectRibbon('preview-results')" id="rib-preview-results" class="rib-btn flex flex-col items-center justify-center p-2 rounded-lg hover:bg-blue-50 dark:hover:bg-slate-800 transition w-24">
+                                    <i class="fa-solid fa-magnifying-glass-chart text-xl text-word-600 dark:text-blue-400 mb-1"></i>
+                                    <span class="text-[11px] font-semibold leading-tight text-center">Preview Results</span>
+                                </button>
+                                <button onclick="inspectRibbon('find-check')" id="rib-find-check" class="rib-btn flex flex-col items-center justify-center p-2 rounded-lg hover:bg-blue-50 dark:hover:bg-slate-800 transition w-28">
+                                    <i class="fa-solid fa-clipboard-check text-xl text-teal-600 mb-1"></i>
+                                    <span class="text-[11px] font-semibold leading-tight text-center">Navigasi, Find & Check Errors</span>
+                                </button>
+                            </div>
+                            <div class="text-[10px] font-bold uppercase tracking-wider text-center text-slate-400 border-t border-slate-100 dark:border-slate-800 pt-1 mt-1">4. Preview Results</div>
+                        </div>
+
+                        <!-- Group 5: Finish -->
+                        <div class="bg-white dark:bg-slate-900 rounded-xl p-2.5 border border-slate-200 dark:border-slate-700 flex flex-col justify-between">
+                            <div class="flex items-center gap-1.5">
+                                <button onclick="inspectRibbon('finish-merge')" id="rib-finish-merge" class="rib-btn flex flex-col items-center justify-center p-2 rounded-lg hover:bg-blue-50 dark:hover:bg-slate-800 transition w-24">
+                                    <i class="fa-solid fa-flag-checkered text-xl text-emerald-600 mb-1"></i>
+                                    <span class="text-[11px] font-semibold leading-tight text-center">Finish & Merge <i class="fa-solid fa-caret-down text-[9px]"></i></span>
+                                </button>
+                            </div>
+                            <div class="text-[10px] font-bold uppercase tracking-wider text-center text-slate-400 border-t border-slate-100 dark:border-slate-800 pt-1 mt-1">5. Finish</div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Dynamic Inspector Panel -->
+                <div id="ribbon-inspector-content" class="p-6 bg-white dark:bg-slate-900">
+                    <!-- Populated via JS on load and click -->
+                </div>
+            </div>
+
+            <!-- Comprehensive Reference Cards for All 4 Main Groups -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Grup Start Mail Merge -->
+                <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+                    <div class="flex items-center gap-2.5 text-word-600 dark:text-blue-400 font-extrabold text-base border-b border-slate-100 dark:border-slate-800 pb-2.5">
+                        <i class="fa-solid fa-folder-tree"></i> A. Grup Start Mail Merge
+                    </div>
+                    <ul class="space-y-3 text-xs sm:text-sm text-slate-600 dark:text-slate-300">
+                        <li>
+                            <strong class="text-slate-900 dark:text-white">1. Start Mail Merge:</strong> Menentukan jenis dokumen utama (<em>Letters, E-mail Messages, Envelopes, Labels, Directory</em>) atau membuka panduan bertahap <strong>Step-by-Step Mail Merge Wizard</strong> di panel kanan layar.
+                        </li>
+                        <li>
+                            <strong class="text-slate-900 dark:text-white">2. Select Recipients (Pilih Penerima):</strong>
+                            <ul class="mt-1.5 ml-4 space-y-1 list-disc text-slate-500 dark:text-slate-400">
+                                <li><strong>Type a New List:</strong> Membuat tabel daftar penerima baru langsung di dalam Word (disimpan sebagai file <code>.mdb</code>).</li>
+                                <li><strong>Use an Existing List:</strong> Menghubungkan Word dengan sumber data eksternal yang sudah disiapkan (seperti file Microsoft Excel <code>.xlsx</code>, Access, atau CSV).</li>
+                                <li><strong>Choose from Outlook Contacts:</strong> Mengambil daftar kontak langsung dari buku alamat Microsoft Outlook.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong class="text-slate-900 dark:text-white">3. Edit Recipient List:</strong> Membuka jendela pengelolaan data untuk mencentang/menghapus centang baris tertentu, melakukan pengurutan abjad (<strong>Sort</strong>), menyaring kriteria data (<strong>Filter</strong>, misal hanya Kota = "Jakarta"), serta mencari data ganda (<strong>Find Duplicates</strong>).
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Grup Write & Insert Fields -->
+                <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+                    <div class="flex items-center gap-2.5 text-emerald-600 dark:text-emerald-400 font-extrabold text-base border-b border-slate-100 dark:border-slate-800 pb-2.5">
+                        <i class="fa-solid fa-pen-to-square"></i> B. Grup Write & Insert Fields
+                    </div>
+                    <ul class="space-y-3 text-xs sm:text-sm text-slate-600 dark:text-slate-300">
+                        <li>
+                            <strong class="text-slate-900 dark:text-white">1. Highlight Merge Fields:</strong> Memberikan warna sorotan abu-abu pada seluruh kode <code>«Merge_Field»</code> di dalam dokumen agar mudah dibedakan dari teks biasa.
+                        </li>
+                        <li>
+                            <strong class="text-slate-900 dark:text-white">2. Address Block & Greeting Line:</strong> Menyisipkan blok alamat tujuan lengkap atau kalimat sapaan pembuka otomatis (seperti <em>"Dear Bapak/Ibu..."</em>) beserta fitur <strong>Match Fields</strong> untuk mencocokkan nama kolom.
+                        </li>
+                        <li>
+                            <strong class="text-slate-900 dark:text-white">3. Insert Merge Field:</strong> Menampilkan daftar seluruh nama kolom (<em>Field</em>) dari tabel Excel untuk disisipkan tepat pada posisi kursor aktif di dokumen Word.
+                        </li>
+                        <li>
+                            <strong class="text-slate-900 dark:text-white">4. Rules (Aturan Logika):</strong>
+                            <ul class="mt-1.5 ml-4 space-y-1 list-disc text-slate-500 dark:text-slate-400">
+                                <li><strong>If...Then...Else:</strong> Logika kondisional (Contoh: Jika kolom <code>Jenis_Kelamin = "L"</code> maka tulis <em>"Bapak"</em>, selain itu tulis <em>"Ibu"</em>).</li>
+                                <li><strong>Next Record:</strong> Memerintahkan Word untuk berpindah membaca baris data (<em>Record</em>) berikutnya di halaman yang sama (wajib untuk pembuatan <strong>Label Undangan</strong>).</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Grup Preview Results -->
+                <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+                    <div class="flex items-center gap-2.5 text-amber-600 dark:text-amber-400 font-extrabold text-base border-b border-slate-100 dark:border-slate-800 pb-2.5">
+                        <i class="fa-solid fa-eye"></i> C. Grup Preview Results
+                    </div>
+                    <ul class="space-y-3 text-xs sm:text-sm text-slate-600 dark:text-slate-300">
+                        <li>
+                            <strong class="text-slate-900 dark:text-white">1. Preview Results (Ikon kaca pembesar ABC):</strong> Mengubah tampilan kode variabel <code>«Nama_Penerima»</code> menjadi isi data sesungguhnya dari baris aktif tanpa harus mencetak dokumen.
+                        </li>
+                        <li>
+                            <strong class="text-slate-900 dark:text-white">2. Tombol Navigasi Record (First, Previous, Next, Last):</strong> Berpindah antar nomor urut baris data (Record 1, 2, 3, dst.) untuk memeriksa kerapian tata letak apabila ada nama atau alamat yang terlalu panjang.
+                        </li>
+                        <li>
+                            <strong class="text-slate-900 dark:text-white">3. Find Recipient & Check for Errors:</strong> Mencari data penerima berdasarkan kata kunci tertentu serta melakukan simulasi uji coba penggabungan untuk mendeteksi kesalahan sintaks kode field.
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Grup Finish -->
+                <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+                    <div class="flex items-center gap-2.5 text-purple-600 dark:text-purple-400 font-extrabold text-base border-b border-slate-100 dark:border-slate-800 pb-2.5">
+                        <i class="fa-solid fa-flag-checkered"></i> D. Grup Finish (Finish & Merge)
+                    </div>
+                    <ul class="space-y-3 text-xs sm:text-sm text-slate-600 dark:text-slate-300">
+                        <li>
+                            <strong class="text-slate-900 dark:text-white">1. Edit Individual Documents (Sangat Direkomendasikan):</strong> Menghasilkan file Microsoft Word baru (biasanya bernama <em>Letters1.docx</em>) yang memuat seluruh halaman surat hasil penggabungan. Anda dapat memilih <strong>All</strong> (semua baris), <strong>Current record</strong> (halaman aktif saja), atau rentang <strong>From... To...</strong>.
+                        </li>
+                        <li>
+                            <strong class="text-slate-900 dark:text-white">2. Print Documents:</strong> Mengirimkan seluruh hasil penggabungan langsung ke antrean mesin pencetak (<em>Printer</em>) atau menyimpannya ke PDF via <em>Microsoft Print to PDF</em>.
+                        </li>
+                        <li>
+                            <strong class="text-slate-900 dark:text-white">3. Send Email Messages:</strong> Membuka kotak dialog pengiriman pesan massal dengan memilih kolom yang berisi alamat email, mengisi baris subjek (<em>Subject line</em>), dan format pengiriman.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             BAGIAN 5: LANGKAH-LANGKAH TERPERINCI MEMBUAT MAIL MERGE (EXCEL & WORD)
+        ====================================================================== -->
+        <section id="langkah-kerja" class="scroll-mt-20 space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
+                <div class="flex items-center gap-3">
+                    <span class="w-9 h-9 rounded-xl bg-word-600 text-white font-extrabold flex items-center justify-center text-sm shadow">05</span>
+                    <div>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">Prosedur Lengkap Membuat Mail Merge (Excel ke Word)</h2>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">Panduan langkah demi langkah dari persiapan tabel Excel hingga pencetakan dokumen akhir</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 bg-white dark:bg-slate-900 px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-800 text-xs font-semibold">
+                    <span>Progres Latihan:</span>
+                    <span id="step-progress-text" class="text-word-600 dark:text-blue-400 font-bold">0 / 8 Langkah</span>
+                </div>
+            </div>
+
+            <!-- Golden Rules for Excel Table -->
+            <div class="bg-gradient-to-r from-emerald-900 to-teal-900 text-white rounded-2xl p-6 shadow-md">
+                <div class="flex items-center gap-2.5 text-emerald-300 font-bold text-sm uppercase tracking-wider mb-3">
+                    <i class="fa-solid fa-triangle-exclamation"></i> 4 Aturan Emas Menyiapkan Tabel Sumber Data di Microsoft Excel
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs sm:text-sm">
+                    <div class="bg-white/10 backdrop-blur-sm p-3.5 rounded-xl border border-white/15">
+                        <div class="font-bold text-emerald-200 mb-1">1. Header Wajib di Baris 1</div>
+                        Letakkan judul kolom (seperti <code>Nama</code>, <code>Jabatan</code>, <code>Kota</code>) tepat di <strong>Baris 1 (Sel A1, B1, C1, dst.)</strong>. Jangan memberi judul laporan di atas tabel.
+                    </div>
+                    <div class="bg-white/10 backdrop-blur-sm p-3.5 rounded-xl border border-white/15">
+                        <div class="font-bold text-emerald-200 mb-1">2. Dilarang Merge Cells</div>
+                        Jangan pernah menggabungkan sel (<em>Merge & Center</em>) pada judul kolom maupun isi tabel karena akan mengacaukan pembacaan kolom di Word.
+                    </div>
+                    <div class="bg-white/10 backdrop-blur-sm p-3.5 rounded-xl border border-white/15">
+                        <div class="font-bold text-emerald-200 mb-1">3. Penamaan Judul Kolom</div>
+                        Gunakan nama kolom yang singkat, jelas, dan hindari simbol aneh. Gunakan garis bawah (<code>_</code>) seperti <code>Nomor_Surat</code> untuk menggantikan spasi.
+                    </div>
+                    <div class="bg-white/10 backdrop-blur-sm p-3.5 rounded-xl border border-white/15">
+                        <div class="font-bold text-emerald-200 mb-1">4. Tutup File Excel</div>
+                        Setelah selesai mengetik dan menyimpan (<code>Ctrl + S</code>), <strong>tutup aplikasi Excel</strong> terlebih dahulu agar file tidak terkunci (<em>File in Use</em>) saat dipanggil Word.
+                    </div>
+                </div>
+            </div>
+
+            <!-- 8 Detailed Interactive Steps -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Step 1 -->
+                <div onclick="toggleStepCheck(1)" id="step-card-1" class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-pointer hover:border-word-500 transition flex gap-4 items-start">
+                    <input type="checkbox" id="step-chk-1" onclick="event.stopPropagation(); toggleStepCheck(1, true)" class="mt-1 w-5 h-5 rounded text-word-600 focus:ring-word-500">
+                    <div class="space-y-1.5">
+                        <span class="text-xs font-bold uppercase tracking-wider text-excel-600 dark:text-emerald-400">Tahap 1 • Microsoft Excel</span>
+                        <h4 class="font-bold text-slate-900 dark:text-white text-base">Buat & Simpan Tabel Sumber Data di Excel</h4>
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                            Buka Microsoft Excel, buat judul kolom pada Baris 1 (misal: <code>Nomor_Surat</code>, <code>Nama_Penerima</code>, <code>Jabatan</code>, <code>Instansi</code>, <code>Kota</code>). Isi baris data di bawahnya, beri nama Sheet (misal: <code>Data_Undangan</code>), simpan sebagai <code>Daftar_Tamu.xlsx</code>, lalu tutup Excel.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div onclick="toggleStepCheck(2)" id="step-card-2" class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-pointer hover:border-word-500 transition flex gap-4 items-start">
+                    <input type="checkbox" id="step-chk-2" onclick="event.stopPropagation(); toggleStepCheck(2, true)" class="mt-1 w-5 h-5 rounded text-word-600 focus:ring-word-500">
+                    <div class="space-y-1.5">
+                        <span class="text-xs font-bold uppercase tracking-wider text-word-600 dark:text-blue-400">Tahap 2 • Microsoft Word</span>
+                        <h4 class="font-bold text-slate-900 dark:text-white text-base">Siapkan Naskah Dokumen Utama (Main Document)</h4>
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                            Buka Microsoft Word dan ketik naskah surat resmi atau desain sertifikat Anda. Kosongkan bagian yang akan diisi data variabel (seperti di sebelah kanan titik dua <code>Nomor : </code> atau di bawah teks <code>Kepada Yth.</code>).
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div onclick="toggleStepCheck(3)" id="step-card-3" class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-pointer hover:border-word-500 transition flex gap-4 items-start">
+                    <input type="checkbox" id="step-chk-3" onclick="event.stopPropagation(); toggleStepCheck(3, true)" class="mt-1 w-5 h-5 rounded text-word-600 focus:ring-word-500">
+                    <div class="space-y-1.5">
+                        <span class="text-xs font-bold uppercase tracking-wider text-word-600 dark:text-blue-400">Tahap 3 • Tab Mailings</span>
+                        <h4 class="font-bold text-slate-900 dark:text-white text-base">Pilih Jenis Dokumen pada Start Mail Merge</h4>
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                            Buka tab <strong>Mailings</strong> pada pita navigasi atas &rarr; klik ikon <strong>Start Mail Merge</strong> &rarr; pilih <strong>Letters</strong> (untuk pembuatan surat/sertifikat) atau <strong>Labels</strong> (untuk stiker label undangan).
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Step 4 -->
+                <div onclick="toggleStepCheck(4)" id="step-card-4" class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-pointer hover:border-word-500 transition flex gap-4 items-start">
+                    <input type="checkbox" id="step-chk-4" onclick="event.stopPropagation(); toggleStepCheck(4, true)" class="mt-1 w-5 h-5 rounded text-word-600 focus:ring-word-500">
+                    <div class="space-y-1.5">
+                        <span class="text-xs font-bold uppercase tracking-wider text-word-600 dark:text-blue-400">Tahap 4 • Koneksi Data</span>
+                        <h4 class="font-bold text-slate-900 dark:text-white text-base">Hubungkan File Excel (Use an Existing List)</h4>
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                            Masih di tab <strong>Mailings</strong>, klik <strong>Select Recipients</strong> &rarr; pilih <strong>Use an Existing List...</strong> &rarr; cari lokasi penyimpanan file <code>Daftar_Tamu.xlsx</code> di komputer Anda, lalu klik <strong>Open</strong>.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Step 5 -->
+                <div onclick="toggleStepCheck(5)" id="step-card-5" class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-pointer hover:border-word-500 transition flex gap-4 items-start">
+                    <input type="checkbox" id="step-chk-5" onclick="event.stopPropagation(); toggleStepCheck(5, true)" class="mt-1 w-5 h-5 rounded text-word-600 focus:ring-word-500">
+                    <div class="space-y-1.5">
+                        <span class="text-xs font-bold uppercase tracking-wider text-word-600 dark:text-blue-400">Tahap 5 • Konfirmasi Tabel</span>
+                        <h4 class="font-bold text-slate-900 dark:text-white text-base">Pilih Sheet pada Kotak Dialog Select Table</h4>
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                            Saat muncul jendela <strong>Select Table</strong>, klik nama lembar kerja tempat data berada (contoh: <code>Data_Undangan$</code>). Pastikan opsi <strong>"First row of data contains column headers"</strong> sudah tercentang, lalu klik <strong>OK</strong>.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Step 6 -->
+                <div onclick="toggleStepCheck(6)" id="step-card-6" class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-pointer hover:border-word-500 transition flex gap-4 items-start">
+                    <input type="checkbox" id="step-chk-6" onclick="event.stopPropagation(); toggleStepCheck(6, true)" class="mt-1 w-5 h-5 rounded text-word-600 focus:ring-word-500">
+                    <div class="space-y-1.5">
+                        <span class="text-xs font-bold uppercase tracking-wider text-word-600 dark:text-blue-400">Tahap 6 • Penyisipan Variabel</span>
+                        <h4 class="font-bold text-slate-900 dark:text-white text-base">Sisipkan Kolom dengan Insert Merge Field</h4>
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                            Letakkan kursor di posisi naskah yang diinginkan, klik tombol <strong>Insert Merge Field</strong>, lalu pilih nama kolom yang sesuai hingga muncul penanda seperti <code>«Nomor_Surat»</code>, <code>«Nama_Penerima»</code>, dan seterusnya. Atur jenis huruf dan tebal/miring pada kode tersebut.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Step 7 -->
+                <div onclick="toggleStepCheck(7)" id="step-card-7" class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-pointer hover:border-word-500 transition flex gap-4 items-start">
+                    <input type="checkbox" id="step-chk-7" onclick="event.stopPropagation(); toggleStepCheck(7, true)" class="mt-1 w-5 h-5 rounded text-word-600 focus:ring-word-500">
+                    <div class="space-y-1.5">
+                        <span class="text-xs font-bold uppercase tracking-wider text-word-600 dark:text-blue-400">Tahap 7 • Pemeriksaan Hasil</span>
+                        <h4 class="font-bold text-slate-900 dark:text-white text-base">Tinjau Hasil Penggabungan (Preview Results)</h4>
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                            Klik ikon <strong>Preview Results</strong> untuk menampilkan data asli. Gunakan tombol panah navigasi (<strong>Next Record &#9654;</strong>) untuk memeriksa hasil pada baris ke-1, ke-2, dan seterusnya. Pastikan spasi dan tanda baca sudah rapi.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Step 8 -->
+                <div onclick="toggleStepCheck(8)" id="step-card-8" class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-pointer hover:border-word-500 transition flex gap-4 items-start">
+                    <input type="checkbox" id="step-chk-8" onclick="event.stopPropagation(); toggleStepCheck(8, true)" class="mt-1 w-5 h-5 rounded text-word-600 focus:ring-word-500">
+                    <div class="space-y-1.5">
+                        <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Tahap 8 • Eksekusi Akhir</span>
+                        <h4 class="font-bold text-slate-900 dark:text-white text-base">Eksekusi Finish & Merge</h4>
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                            Klik tombol <strong>Finish & Merge</strong> &rarr; pilih <strong>Edit Individual Documents...</strong> &rarr; pilih <strong>All</strong> &rarr; klik <strong>OK</strong>. Word akan membuka dokumen baru berisi seluruh halaman surat yang siap disimpan ke PDF atau dicetak.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             BAGIAN 6: CONTOH KASUS LENGKAP & SIMULASI INTERAKTIF
+        ====================================================================== -->
+        <section id="simulasi-kasus" class="scroll-mt-20 space-y-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
+                <div class="flex items-center gap-3">
+                    <span class="w-9 h-9 rounded-xl bg-word-600 text-white font-extrabold flex items-center justify-center text-sm shadow">06</span>
+                    <div>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">Contoh Kasus Lengkap & Simulasi Interaktif</h2>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">Uji coba langsung tombol <strong>Preview Results</strong>, navigasi <strong>Record 1–4</strong>, dan pintasan <strong>Alt + F9</strong></p>
+                    </div>
+                </div>
+
+                <!-- Case Switcher Tabs -->
+                <div class="inline-flex p-1 rounded-xl bg-slate-200 dark:bg-slate-800">
+                    <button onclick="switchSimulationCase(1)" id="tab-case-1" class="px-4 py-2 rounded-lg text-xs sm:text-sm font-bold bg-word-600 text-white shadow transition">
+                        <i class="fa-solid fa-file-signature mr-1.5"></i>Kasus 1: Surat Undangan Resmi
+                    </button>
+                    <button onclick="switchSimulationCase(2)" id="tab-case-2" class="px-4 py-2 rounded-lg text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-300 hover:text-slate-900 transition">
+                        <i class="fa-solid fa-table-cells-large mr-1.5"></i>Kasus 2: Label Undangan («Next Record»)
+                    </button>
+                </div>
+            </div>
+
+            <!-- ==========================================================
+                 SIMULASI KASUS 1: SURAT UNDANGAN RESMI
+            =========================================================== -->
+            <div id="sim-case-1-container" class="space-y-6">
+                <!-- Penjelasan Kasus 1 -->
+                <div class="bg-blue-50/70 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800/60 rounded-2xl p-5 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+                    <div class="space-y-1">
+                        <div class="text-xs font-bold uppercase tracking-wider text-word-600 dark:text-blue-400">Skenario Studi Kasus 1 (Mode: Letters)</div>
+                        <h3 class="text-lg font-extrabold text-slate-900 dark:text-white">Pembuatan Surat Undangan Rapat Koordinasi Nasional & Konfirmasi Honorarium</h3>
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300">
+                            Panitia ingin membuat 4 surat undangan resmi yang mencantumkan variabel <code>«Nomor_Surat»</code>, <code>«Nama_Penerima»</code>, <code>«Jabatan»</code>, <code>«Instansi»</code>, <code>«Kota»</code>, <code>«Tanggal_Acara»</code>, dan <code>«Honorarium»</code>. Gunakan toolbar di bawah untuk menguji cara kerjanya!
+                        </p>
+                    </div>
+                    <div class="flex flex-wrap gap-2 shrink-0">
+                        <button onclick="openAllMergedModal()" class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow flex items-center gap-2 transition">
+                            <i class="fa-solid fa-copy"></i> Finish & Merge (Lihat Semua 4 Halaman)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 1 of Case 1: Sumber Data Excel -->
+                <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+                    <div class="bg-excel-600 text-white px-5 py-3 flex flex-wrap items-center justify-between gap-2">
+                        <div class="flex items-center gap-2.5">
+                            <i class="fa-solid fa-file-excel text-lg"></i>
+                            <div>
+                                <h4 class="text-sm font-bold leading-tight">Tabel Sumber Data Excel: <span class="font-mono font-normal text-emerald-100">Data_Peserta_Rakor.xlsx (Sheet1$)</span></h4>
+                            </div>
+                        </div>
+                        <span class="text-xs bg-white/15 px-2.5 py-1 rounded-lg font-medium">Klik baris mana saja untuk memilih Record aktif</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-xs sm:text-sm">
+                            <thead>
+                                <tr class="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-b border-slate-300 dark:border-slate-700 font-mono text-xs">
+                                    <th class="py-2.5 px-3 border-r border-slate-200 dark:border-slate-700 text-center">Record</th>
+                                    <th class="py-2.5 px-3 border-r border-slate-200 dark:border-slate-700">Nomor_Surat</th>
+                                    <th class="py-2.5 px-3 border-r border-slate-200 dark:border-slate-700">Nama_Penerima</th>
+                                    <th class="py-2.5 px-3 border-r border-slate-200 dark:border-slate-700">Jabatan</th>
+                                    <th class="py-2.5 px-3 border-r border-slate-200 dark:border-slate-700">Instansi</th>
+                                    <th class="py-2.5 px-3 border-r border-slate-200 dark:border-slate-700">Kota</th>
+                                    <th class="py-2.5 px-3 border-r border-slate-200 dark:border-slate-700">Tanggal_Acara</th>
+                                    <th class="py-2.5 px-3">Honorarium</th>
+                                </tr>
+                            </thead>
+                            <tbody id="case1-excel-tbody" class="divide-y divide-slate-200 dark:divide-slate-800">
+                                <!-- Populated via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Interactive Simulation Control Toolbar (Mimics Word Mailings Toolbar) -->
+                <div class="bg-slate-800 text-white rounded-2xl p-4 shadow-xl border border-slate-700">
+                    <div class="flex flex-wrap items-center justify-between gap-4">
+                        <!-- Left Controls: Mode Toggles -->
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="text-xs font-bold uppercase tracking-wider text-slate-400 mr-1"><i class="fa-solid fa-sliders mr-1"></i>Kontrol Simulasi:</span>
+
+                            <!-- Toggle Preview Results -->
+                            <button onclick="toggleSimPreview()" id="btn-sim-preview" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-word-600 text-white ring-2 ring-blue-400 shadow flex items-center gap-2 transition">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                                <span id="lbl-sim-preview">Preview Results: ON</span>
+                            </button>
+
+                            <!-- Toggle Highlight Merge Fields -->
+                            <button onclick="toggleSimHighlight()" id="btn-sim-highlight" class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-700 hover:bg-slate-600 text-slate-100 flex items-center gap-2 transition">
+                                <i class="fa-solid fa-highlighter text-amber-400"></i>
+                                <span id="lbl-sim-highlight">Highlight Fields: ON</span>
+                            </button>
+
+                            <!-- Toggle Alt + F9 Field Codes -->
+                            <button onclick="toggleSimAltF9()" id="btn-sim-altf9" class="px-3.5 py-2 rounded-xl text-xs font-mono font-bold bg-slate-700 hover:bg-amber-600 text-amber-300 hover:text-white border border-amber-500/40 flex items-center gap-2 transition">
+                                <i class="fa-solid fa-keyboard"></i>
+                                <span id="lbl-sim-altf9">Simulasi Alt + F9: OFF</span>
+                            </button>
+                        </div>
+
+                        <!-- Right Controls: Record Navigator -->
+                        <div class="flex items-center gap-1.5 bg-slate-900 px-3 py-1.5 rounded-xl border border-slate-700">
+                            <span class="text-xs text-slate-400 mr-1 font-medium">Navigasi Record:</span>
+                            <button onclick="changeRecord('first')" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs flex items-center justify-center transition" title="First Record">
+                                <i class="fa-solid fa-backward-step"></i>
+                            </button>
+                            <button onclick="changeRecord('prev')" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs flex items-center justify-center transition" title="Previous Record">
+                                <i class="fa-solid fa-caret-left text-base"></i>
+                            </button>
+                            <div class="px-3 py-1 bg-slate-950 rounded-lg border border-slate-700 font-mono text-xs font-bold text-blue-400 min-w-[90px] text-center">
+                                Record <span id="sim-record-num">1</span> / 4
+                            </div>
+                            <button onclick="changeRecord('next')" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs flex items-center justify-center transition" title="Next Record">
+                                <i class="fa-solid fa-caret-right text-base"></i>
+                            </button>
+                            <button onclick="changeRecord('last')" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs flex items-center justify-center transition" title="Last Record">
+                                <i class="fa-solid fa-forward-step"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Mode Status Bar -->
+                    <div id="sim-status-banner" class="mt-3 pt-2.5 border-t border-slate-700/80 text-xs text-slate-300 flex flex-wrap items-center justify-between gap-2">
+                        <span id="sim-status-text"><i class="fa-solid fa-circle-check text-emerald-400 mr-1.5"></i>Mode <strong>Preview Results Aktif</strong>: Menampilkan hasil penggabungan nyata untuk <strong>Record 1</strong>.</span>
+                        <span class="font-mono text-[11px] text-slate-400">Tips: Klik tombol "Simulasi Alt + F9" untuk melihat kode Picture Switch!</span>
+                    </div>
+                </div>
+
+                <!-- Simulated Word Document Canvas -->
+                <div class="bg-slate-200/70 dark:bg-slate-900/60 p-4 sm:p-8 rounded-2xl border border-slate-300 dark:border-slate-800">
+                    <div class="max-w-3xl mx-auto bg-white dark:bg-slate-900 word-paper rounded-lg p-6 sm:p-12 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 text-sm sm:text-base leading-relaxed">
+                        
+                        <!-- Kop Surat -->
+                        <div class="border-b-4 border-double border-slate-800 dark:border-slate-300 pb-4 mb-6 text-center">
+                            <div class="text-xs sm:text-sm font-bold tracking-widest uppercase text-slate-600 dark:text-slate-400">KEMENTERIAN TRANSFORMASI DIGITAL DAN INOVASI</div>
+                            <div class="text-base sm:text-xl font-extrabold tracking-wide uppercase text-slate-900 dark:text-white">DIREKTORAT JENDERAL PENGEMBANGAN KOMPETENSI SDM</div>
+                            <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">Jl. Medan Merdeka Barat No. 14, Jakarta Pusat 10110 • Telp. (021) 3849000 • Laman: www.komdigi-edu.go.id</div>
+                        </div>
+
+                        <!-- Nomor, Lampiran, Perihal & Tanggal -->
+                        <div class="flex flex-col sm:flex-row justify-between gap-2 mb-6 text-sm">
+                            <div class="space-y-1">
+                                <div class="flex">
+                                    <span class="w-24 shrink-0">Nomor</span>
+                                    <span>: <span id="mf-nomor" class="merge-token"></span></span>
+                                </div>
+                                <div class="flex">
+                                    <span class="w-24 shrink-0">Lampiran</span>
+                                    <span>: 1 (Satu) Berkas Jadwal Kegiatan</span>
+                                </div>
+                                <div class="flex">
+                                    <span class="w-24 shrink-0">Perihal</span>
+                                    <span class="font-semibold">: Undangan Narasumber Rapat Koordinasi Nasional</span>
+                                </div>
+                            </div>
+                            <div class="sm:text-right shrink-0">
+                                Jakarta, 18 November 2026
+                            </div>
+                        </div>
+
+                        <!-- Tujuan Surat -->
+                        <div class="mb-6 text-sm space-y-0.5">
+                            <div>Kepada Yth.</div>
+                            <div class="font-bold"><span id="mf-nama" class="merge-token"></span></div>
+                            <div><span id="mf-jabatan" class="merge-token"></span></div>
+                            <div><span id="mf-instansi" class="merge-token"></span></div>
+                            <div>di —</div>
+                            <div class="pl-4 font-semibold underline"><span id="mf-kota" class="merge-token"></span></div>
+                        </div>
+
+                        <!-- Isi Surat -->
+                        <div class="space-y-4 text-sm text-justify leading-relaxed">
+                            <p>Dengan hormat,</p>
+                            <p>
+                                Dalam rangka percepatan standardisasi tata kelola administrasi perkantoran modern berbasis digital, Direktorat Jenderal Pengembangan Kompetensi SDM akan menyelenggarakan kegiatan <strong>Rapat Koordinasi Nasional Otomatisasi Dokumen</strong>. Sehubungan dengan hal tersebut, kami mengundang Saudara/i <span id="mf-nama-inline" class="merge-token"></span> mewakili <span id="mf-instansi-inline" class="merge-token"></span> untuk hadir sebagai Narasumber pada:
+                            </p>
+
+                            <div class="pl-4 sm:pl-8 py-2 space-y-1.5 border-l-2 border-word-600 bg-slate-50 dark:bg-slate-800/50 rounded-r-lg pr-4">
+                                <div class="flex">
+                                    <span class="w-36 shrink-0 font-medium">Hari, Tanggal</span>
+                                    <span>: <span id="mf-tanggal" class="merge-token"></span></span>
+                                </div>
+                                <div class="flex">
+                                    <span class="w-36 shrink-0 font-medium">Waktu</span>
+                                    <span>: Pukul 09.00 – 15.30 WIB</span>
+                                </div>
+                                <div class="flex">
+                                    <span class="w-36 shrink-0 font-medium">Tempat</span>
+                                    <span>: Auditorium Nusantara Lt. 4, Gedung Utama Jakarta</span>
+                                </div>
+                                <div class="flex">
+                                    <span class="w-36 shrink-0 font-medium">Honorarium Bersih</span>
+                                    <span>: <span id="mf-honor" class="merge-token"></span></span>
+                                </div>
+                            </div>
+
+                            <p>
+                                Mengingat pentingnya agenda rapat koordinasi ini, kehadiran Bapak/Ibu tepat pada waktunya sangat kami harapkan. Demikian surat undangan ini kami sampaikan, atas perhatian dan kerja sama yang baik kami ucapkan terima kasih.
+                            </p>
+                        </div>
+
+                        <!-- Tanda Tangan -->
+                        <div class="mt-8 flex justify-end text-sm">
+                            <div class="w-64 text-left space-y-12">
+                                <div>
+                                    <div>Direktur Pengembangan SDM,</div>
+                                </div>
+                                <div>
+                                    <div class="font-bold underline">Prof. Dr. Hendra Wijaya, M.Sc.</div>
+                                    <div class="text-xs text-slate-500">NIP. 19740812 199903 1 002</div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==========================================================
+                 SIMULASI KASUS 2: PEMBUATAN LABEL UNDANGAN («NEXT RECORD»)
+            =========================================================== -->
+            <div id="sim-case-2-container" class="hidden space-y-6">
+                <div class="bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/60 rounded-2xl p-5 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+                    <div class="space-y-1">
+                        <div class="text-xs font-bold uppercase tracking-wider text-excel-600 dark:text-emerald-400">Skenario Studi Kasus 2 (Mode: Labels & Aturan «Next Record»)</div>
+                        <h3 class="text-lg font-extrabold text-slate-900 dark:text-white">Pembuatan Stiker Label Undangan (Ukuran Label No. 103 — 1 Lembar Isi 4 Kotak Sampel)</h3>
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300">
+                            Pada pembuatan label undangan, satu halaman kertas stiker memuat banyak kotak. Agar setiap kotak menampilkan tamu yang berbeda (Record 1, Record 2, Record 3, Record 4), kotak ke-2 dan seterusnya <strong>wajib diawali kode <code>«Next Record»</code></strong>. Bandingkan perbedaannya di bawah ini!
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Label Simulation Controls -->
+                <div class="bg-slate-800 text-white rounded-2xl p-4 shadow-xl border border-slate-700 flex flex-wrap items-center justify-between gap-4">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400 mr-1">Mode Tampilan Label:</span>
+                        <button onclick="setLabelSimMode('template')" id="btn-lbl-template" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-700 hover:bg-slate-600 text-white transition">
+                            1. Tampilan Kode «Merge_Field»
+                        </button>
+                        <button onclick="setLabelSimMode('preview')" id="btn-lbl-preview" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-600 text-white ring-2 ring-emerald-400 transition">
+                            2. Preview Results (Dengan «Next Record»)
+                        </button>
+                        <button onclick="setLabelSimMode('bug')" id="btn-lbl-bug" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-rose-700/80 hover:bg-rose-600 text-rose-100 transition">
+                            3. Contoh Salah (Tanpa «Next Record»)
+                        </button>
+                    </div>
+                    <div class="text-xs text-slate-300">
+                        <i class="fa-solid fa-rotate mr-1 text-emerald-400"></i> Tip di Word: Klik tombol <strong>Update Labels</strong> untuk menyalin desain kotak ke-1 beserta <code>«Next Record»</code> ke seluruh kotak lainnya.
+                    </div>
+                </div>
+
+                <!-- Label Sheet Grid Visual -->
+                <div class="bg-slate-200 dark:bg-slate-900/70 p-6 sm:p-8 rounded-2xl border border-slate-300 dark:border-slate-800">
+                    <div class="max-w-4xl mx-auto">
+                        <div id="label-sim-explanation" class="mb-4 p-3.5 rounded-xl bg-emerald-100 dark:bg-emerald-950/70 border border-emerald-300 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200 text-xs sm:text-sm font-medium">
+                            <!-- Filled via JS -->
+                        </div>
+                        <div id="label-grid-canvas" class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white dark:bg-slate-950 p-6 rounded-2xl shadow-lg border-2 border-dashed border-slate-300 dark:border-slate-700">
+                            <!-- 4 Label Boxes Populated via JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             BAGIAN 7: TROUBLESHOOTING & PENGATURAN FORMAT DATA LANJUTAN (PICTURE SWITCH)
+        ====================================================================== -->
+        <section id="troubleshooting" class="scroll-mt-20 space-y-6">
+            <div class="flex items-center gap-3 border-b border-slate-200 dark:border-slate-800 pb-4">
+                <span class="w-9 h-9 rounded-xl bg-word-600 text-white font-extrabold flex items-center justify-center text-sm shadow">07</span>
+                <div>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">Troubleshooting & Pengaturan Format Data Lanjutan (Picture Switch)</h2>
+                    <p class="text-sm text-slate-500 dark:text-slate-400">Solusi tuntas mengatasi format Tanggal berubah ke bahasa Inggris, mata uang Rupiah hilang, dan angka nol (0) nomor telepon terpotong</p>
+                </div>
+            </div>
+
+            <!-- Mengapa Format Berubah & Cara Kerja Alt + F9 -->
+            <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+                <div class="flex flex-col lg:flex-row gap-6 items-start">
+                    <div class="lg:w-1/2 space-y-3">
+                        <span class="text-xs font-bold uppercase tracking-wider text-rose-600 dark:text-rose-400">Akar Masalah Integrasi Excel &rarr; Word</span>
+                        <h3 class="text-lg font-extrabold text-slate-900 dark:text-white">Mengapa Format Tanggal & Rupiah dari Excel Berubah Saat Masuk ke Word?</h3>
+                        <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                            Secara bawaan, koneksi <strong>OLE DB</strong> pada Microsoft Word hanya menarik <strong>nilai mentah (<em>raw value</em>)</strong> dari sel Excel dan mengabaikan pemformatan tampilan (<em>Number Formatting</em>) yang Anda buat di Excel. Akibatnya:
+                        </p>
+                        <ul class="space-y-2 text-xs sm:text-sm text-slate-600 dark:text-slate-300">
+                            <li class="flex items-center gap-2">
+                                <i class="fa-solid fa-xmark text-rose-500"></i>
+                                <span>Tanggal <code>18 November 2026</code> di Excel berubah menjadi format Amerika <code>11/18/2026</code> di Word.</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i class="fa-solid fa-xmark text-rose-500"></i>
+                                <span>Nominal <code>Rp 3.500.000</code> di Excel berubah menjadi angka polos <code>3500000</code> tanpa titik ribuan.</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i class="fa-solid fa-xmark text-rose-500"></i>
+                                <span>Nomor telepon <code>08123456789</code> di Excel berubah menjadi <code>8123456789</code> (angka 0 di depan hilang).</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Panduan Pintasan Alt + F9 -->
+                    <div class="lg:w-1/2 bg-slate-900 text-white rounded-xl p-5 border border-slate-800 space-y-3 w-full">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold uppercase tracking-wider text-amber-400"><i class="fa-solid fa-keyboard mr-1.5"></i>Prosedur Wajib: Menampilkan Kode Field</span>
+                            <span class="text-xs font-mono bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded border border-amber-500/30">Alt + F9</span>
+                        </div>
+                        <ol class="space-y-2 text-xs sm:text-sm text-slate-300 list-decimal list-inside">
+                            <li>Buka dokumen Word Anda, lalu tekan tombol <kbd class="px-2 py-0.5 bg-slate-800 border border-slate-600 rounded font-mono text-amber-300">Alt + F9</kbd> (atau <kbd class="px-2 py-0.5 bg-slate-800 border border-slate-600 rounded font-mono text-amber-300">Alt + Fn + F9</kbd> pada laptop) untuk membuka kode di balik <code>«Field»</code>.</li>
+                            <li>Tampilan <code>«Tanggal»</code> akan berubah menjadi kode kurung kurawal: <code class="text-amber-300 font-mono">{ MERGEFIELD Tanggal }</code>. <em>(Catatan: Jangan mengetik kurung kurawal secara manual di keyboard!)</em></li>
+                            <li>Ketikkan <strong>Picture Switch</strong> (seperti <code>\@</code> untuk tanggal atau <code>\#</code> untuk angka) tepat sebelum tanda kurung kurawal penutup <code>}</code>.</li>
+                            <li>Tekan kembali <kbd class="px-2 py-0.5 bg-slate-800 border border-slate-600 rounded font-mono text-amber-300">Alt + F9</kbd> untuk menutup kode, lalu tekan <kbd class="px-2 py-0.5 bg-slate-800 border border-slate-600 rounded font-mono text-emerald-300">F9</kbd> (Update Field) atau klik <strong>Preview Results</strong> dua kali.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3 Detailed Troubleshooting Cards with Copy Buttons -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+                <!-- Masalah 1: Format Tanggal (\@) -->
+                <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between space-y-4">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="px-2.5 py-1 rounded-lg bg-blue-100 dark:bg-blue-950 text-word-600 dark:text-blue-400 font-mono text-xs font-bold">Sakelar Tanggal: \@</span>
+                            <i class="fa-solid fa-calendar-days text-word-600 dark:text-blue-400 text-lg"></i>
+                        </div>
+                        <h4 class="font-extrabold text-slate-900 dark:text-white text-base">1. Mengatasi Format Tanggal Bahasa Inggris / Terbalik</h4>
+                        <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                            Tambahkan sakelar <code>\@ "format"</code> di dalam kode field. Untuk memaksa nama hari dan bulan tampil dalam <strong>Bahasa Indonesia</strong> walaupun pengaturan Windows berbahasa Inggris, tambahkan kode lokal <code>\l 1057</code> atau pastikan bahasa teks di Word disetel ke <em>Indonesian</em>.
+                        </p>
+
+                        <div class="space-y-2 pt-1">
+                            <div class="p-3 rounded-xl bg-slate-900 text-slate-100 font-mono text-xs space-y-1">
+                                <div class="flex items-center justify-between text-[11px] text-slate-400 font-sans">
+                                    <span>Format Tanggal Lengkap:</span>
+                                    <button onclick="copySnippet('{ MERGEFIELD Tanggal \\@ &quot;dd MMMM yyyy&quot; }')" class="text-blue-400 hover:text-blue-300 font-semibold"><i class="fa-regular fa-copy mr-1"></i>Salin</button>
+                                </div>
+                                <div class="text-amber-300 break-all">{ MERGEFIELD Tanggal \@ "dd MMMM yyyy" }</div>
+                                <div class="text-[11px] text-emerald-400 font-sans">&rarr; Hasil: <strong>25 November 2026</strong></div>
+                            </div>
+
+                            <div class="p-3 rounded-xl bg-slate-900 text-slate-100 font-mono text-xs space-y-1">
+                                <div class="flex items-center justify-between text-[11px] text-slate-400 font-sans">
+                                    <span>Format Hari + Tanggal:</span>
+                                    <button onclick="copySnippet('{ MERGEFIELD Tanggal \\@ &quot;dddd, dd MMMM yyyy&quot; }')" class="text-blue-400 hover:text-blue-300 font-semibold"><i class="fa-regular fa-copy mr-1"></i>Salin</button>
+                                </div>
+                                <div class="text-amber-300 break-all">{ MERGEFIELD Tanggal \@ "dddd, dd MMMM yyyy" }</div>
+                                <div class="text-[11px] text-emerald-400 font-sans">&rarr; Hasil: <strong>Rabu, 25 November 2026</strong></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-[11px] text-slate-500 dark:text-slate-400 border-t border-slate-100 dark:border-slate-800 pt-3">
+                        <strong>Keterangan Kode:</strong> <code>dd</code> ( tanggal 01-31), <code>MMMM</code> (nama bulan penuh, wajib huruf M kapital), <code>dddd</code> (nama hari penuh), <code>yyyy</code> (4 digit tahun).
+                    </div>
+                </div>
+
+                <!-- Masalah 2: Format Rupiah & Pemisah Ribuan (\#) -->
+                <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between space-y-4">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="px-2.5 py-1 rounded-lg bg-emerald-100 dark:bg-emerald-950 text-excel-600 dark:text-emerald-400 font-mono text-xs font-bold">Sakelar Angka: \#</span>
+                            <i class="fa-solid fa-money-bill-wave text-excel-600 dark:text-emerald-400 text-lg"></i>
+                        </div>
+                        <h4 class="font-extrabold text-slate-900 dark:text-white text-base">2. Mengatasi Format Mata Uang Rupiah & Ribuan Hilang</h4>
+                        <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                            Tambahkan sakelar numerik <code>\# "Rp #,##0"</code> atau <code>\# "Rp #.##0"</code> (menyesuaikan pengaturan <em>Region</em> komputer Anda, apakah pemisah ribuan menggunakan koma atau titik).
+                        </p>
+
+                        <div class="space-y-2 pt-1">
+                            <div class="p-3 rounded-xl bg-slate-900 text-slate-100 font-mono text-xs space-y-1">
+                                <div class="flex items-center justify-between text-[11px] text-slate-400 font-sans">
+                                    <span>Format Rupiah Tanpa Desimal:</span>
+                                    <button onclick="copySnippet('{ MERGEFIELD Nominal \\# &quot;Rp #,##0&quot; }')" class="text-blue-400 hover:text-blue-300 font-semibold"><i class="fa-regular fa-copy mr-1"></i>Salin</button>
+                                </div>
+                                <div class="text-amber-300 break-all">{ MERGEFIELD Nominal \# "Rp #,##0" }</div>
+                                <div class="text-[11px] text-emerald-400 font-sans">&rarr; Hasil: <strong>Rp 3.500.000</strong></div>
+                            </div>
+
+                            <div class="p-3 rounded-xl bg-slate-900 text-slate-100 font-mono text-xs space-y-1">
+                                <div class="flex items-center justify-between text-[11px] text-slate-400 font-sans">
+                                    <span>Format Rupiah Lengkap (,00):</span>
+                                    <button onclick="copySnippet('{ MERGEFIELD Nominal \\# &quot;Rp #,##0.00&quot; }')" class="text-blue-400 hover:text-blue-300 font-semibold"><i class="fa-regular fa-copy mr-1"></i>Salin</button>
+                                </div>
+                                <div class="text-amber-300 break-all">{ MERGEFIELD Nominal \# "Rp #,##0.00" }</div>
+                                <div class="text-[11px] text-emerald-400 font-sans">&rarr; Hasil: <strong>Rp 3.500.000,00</strong></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-[11px] text-slate-500 dark:text-slate-400 border-t border-slate-100 dark:border-slate-800 pt-3">
+                        <strong>Tips Region Indonesia:</strong> Jika komputer Anda menggunakan Region Indonesia, gunakan tanda titik untuk ribuan: <code>\# "Rp #.##0"</code>.
+                    </div>
+                </div>
+
+                <!-- Masalah 3: Angka Nol (0) di Depan Hilang -->
+                <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between space-y-4">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="px-2.5 py-1 rounded-lg bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-400 font-mono text-xs font-bold">Leading Zero (0)</span>
+                            <i class="fa-solid fa-phone-volume text-amber-600 dark:text-amber-400 text-lg"></i>
+                        </div>
+                        <h4 class="font-extrabold text-slate-900 dark:text-white text-base">3. Mengatasi Angka Nol (0) di Depan Nomor HP / NIP Hilang</h4>
+                        <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                            Excel menganggap deretan angka seperti <code>08123456789</code> atau nomor urut <code>001</code> sebagai nilai numerik biasa sehingga angka <code>0</code> di paling depan otomatis dihapus. Ada <strong>3 solusi mudah</strong>:
+                        </p>
+
+                        <div class="space-y-2 pt-1 text-xs">
+                            <div class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                                <div class="font-bold text-slate-900 dark:text-white">Solusi A: Tanda Kutip Tunggal (') di Excel</div>
+                                <div class="text-slate-600 dark:text-slate-400">Awali pengetikan nomor telepon di Excel dengan tanda petik satu: <code class="font-mono text-amber-600 dark:text-amber-400">'081234567890</code>.</div>
+                            </div>
+                            <div class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                                <div class="font-bold text-slate-900 dark:text-white">Solusi B: Ubah Format Kolom Excel ke Text</div>
+                                <div class="text-slate-600 dark:text-slate-400">Blok kolom Nomor HP/NIP di Excel &rarr; ubah format <em>General</em> menjadi <strong>Text</strong> sebelum mengetik angka.</div>
+                            </div>
+                            <div class="p-2.5 rounded-xl bg-slate-900 text-slate-100 font-mono">
+                                <div class="text-[11px] text-slate-400 font-sans font-bold">Solusi C: Picture Switch Digit Tetap di Word</div>
+                                <div class="text-amber-300 mt-0.5">{ MERGEFIELD No_Urut \# "000" } &rarr; <span class="text-emerald-400">001</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-[11px] text-slate-500 dark:text-slate-400 border-t border-slate-100 dark:border-slate-800 pt-3">
+                        <strong>Tambahan Kapitalisasi Teks:</strong> Gunakan <code>\* Upper</code> untuk HURUF BESAR SEMUA atau <code>\* FirstCap</code> untuk huruf kapital di awal kalimat.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interactive Picture Switch Tester -->
+            <div class="bg-gradient-to-br from-slate-900 to-word-900 text-white rounded-2xl p-6 shadow-lg border border-slate-800">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-amber-400"><i class="fa-solid fa-flask mr-1"></i>Laboratorium Kode Field</span>
+                        <h3 class="text-lg font-extrabold"> Kalkulator & Penguji Kode Picture Switch Interaktif</h3>
+                    </div>
+                    <span class="text-xs text-blue-200">Pilih skenario format di bawah untuk melihat perbandingan sebelum & sesudah diberi Picture Switch</span>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
+                    <div class="lg:col-span-4 space-y-2">
+                        <label class="text-xs font-bold uppercase tracking-wider text-slate-300 block">Pilih Kasus Format Data:</label>
+                        <select id="switch-tester-select" onchange="updateSwitchTester()" class="w-full rounded-xl bg-slate-800 border border-slate-700 text-white px-3.5 py-2.5 text-xs sm:text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-400">
+                            <option value="date-full">1. Tanggal Surat Resmi (25 November 2026)</option>
+                            <option value="date-day">2. Hari & Tanggal Acara (Rabu, 25 November 2026)</option>
+                            <option value="currency-rp">3. Mata Uang Rupiah (Rp 3.500.000)</option>
+                            <option value="currency-dec">4. Mata Uang Desimal (Rp 3.500.000,00)</option>
+                            <option value="leading-zero">5. Nomor Urut 4 Digit (0007)</option>
+                            <option value="uppercase">6. Huruf Kapital Semua (DR. BUDI SANTOSO)</option>
+                        </select>
+                    </div>
+
+                    <div class="lg:col-span-8 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                        <div class="bg-rose-950/50 border border-rose-500/30 rounded-xl p-3.5">
+                            <div class="text-rose-300 font-bold mb-1"><i class="fa-solid fa-circle-xmark mr-1"></i>Tanpa Switch (Default):</div>
+                            <div id="tester-raw-code" class="font-mono text-[11px] text-slate-300 mb-1">{ MERGEFIELD Tanggal }</div>
+                            <div id="tester-raw-out" class="font-mono font-bold text-sm text-rose-200">11/25/2026</div>
+                        </div>
+
+                        <div class="bg-amber-950/50 border border-amber-500/30 rounded-xl p-3.5">
+                            <div class="text-amber-300 font-bold mb-1"><i class="fa-solid fa-code mr-1"></i>Kode Picture Switch:</div>
+                            <div id="tester-switch-code" class="font-mono text-[11px] text-amber-200 break-all">{ MERGEFIELD Tanggal \@ "dd MMMM yyyy" }</div>
+                        </div>
+
+                        <div class="bg-emerald-950/50 border border-emerald-500/30 rounded-xl p-3.5">
+                            <div class="text-emerald-300 font-bold mb-1"><i class="fa-solid fa-circle-check mr-1"></i>Hasil Akhir di Word:</div>
+                            <div class="text-[11px] text-slate-300 mb-1">Setelah tekan Alt+F9 & F9:</div>
+                            <div id="tester-final-out" class="font-bold text-sm text-emerald-200">25 November 2026</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             BAGIAN 8: EVALUASI PEMAHAMAN (KUIS INTERAKTIF)
+        ====================================================================== -->
+        <section id="kuis" class="scroll-mt-20 space-y-6">
+            <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
+                <div class="flex items-center gap-3">
+                    <span class="w-9 h-9 rounded-xl bg-word-600 text-white font-extrabold flex items-center justify-center text-sm shadow">08</span>
+                    <div>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">Uji Pemahaman Materi Mail Merge</h2>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">Jawab 5 soal singkat berikut untuk menguji penguasaan konsep dan praktik Mail Merge Anda</p>
+                    </div>
+                </div>
+                <button onclick="resetQuiz()" class="px-3.5 py-2 rounded-xl bg-slate-200 dark:bg-slate-800 text-xs font-bold hover:bg-slate-300 transition">
+                    <i class="fa-solid fa-rotate-right mr-1"></i>Ulangi Kuis
+                </button>
+            </div>
+
+            <div id="quiz-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Populated via JS -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- =====================================================================
+         MODAL: FINISH & MERGE (LIHAT SEMUA 4 HALAMAN HASIL MERGE)
+    ====================================================================== -->
+    <div id="all-pages-modal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-5xl w-full max-h-[90vh] flex flex-col border border-slate-200 dark:border-slate-700 shadow-2xl overflow-hidden">
+            <div class="px-6 py-4 bg-word-700 text-white flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <i class="fa-solid fa-copy text-lg"></i>
+                    <div>
+                        <h3 class="font-bold text-base">Hasil Finish & Merge &rarr; Edit Individual Documents (Letters1.docx)</h3>
+                        <p class="text-xs text-blue-200">Menampilkan seluruh 4 halaman surat yang dihasilkan secara otomatis dari 4 baris Record Excel</p>
+                    </div>
+                </div>
+                <button onclick="closeAllMergedModal()" class="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center text-white">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div id="all-pages-body" class="p-6 overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-100 dark:bg-slate-950">
+                <!-- Populated via JS -->
+            </div>
+            <div class="px-6 py-3 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex justify-end">
+                <button onclick="closeAllMergedModal()" class="px-5 py-2 rounded-xl bg-word-600 text-white font-bold text-xs hover:bg-word-700 transition">Tutup Pratinjau</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-8 mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 dark:text-slate-400">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-file-word text-word-600 text-base"></i>
+                <span class="font-semibold text-slate-700 dark:text-slate-200">Modul Interaktif Mail Merge Microsoft Word</span>
+            </div>
+            <div>Materi Lengkap: Konsep Dasar • Field vs Record • Tab Mailings • Simulasi Kasus • Picture Switch</div>
+        </div>
+    </footer>
+
+    <!-- =====================================================================
+         JAVASCRIPT LOGIC FOR INTERACTIVE SIMULATIONS & COMPONENTS
+    ====================================================================== -->
+    <script>
+        // -----------------------------------------------------------------
+        // 1. DATA SUMBER (DATA SOURCE EXCEL UNTUK SIMULASI KASUS 1 & 2)
+        // -----------------------------------------------------------------
+        const recipientRecords = [
+            {
+                id: 1,
+                nomor_surat: "001/UND-RAKOR/XI/2026",
+                nama: "Dr. Budi Santoso, M.Kom.",
+                jabatan: "Kepala Dinas Komunikasi dan Informatika",
+                instansi: "Pemerintah Provinsi DKI Jakarta",
+                kota: "Jakarta Pusat",
+                tanggal_raw: "11/25/2026",
+                tanggal_indo: "Rabu, 25 November 2026",
+                honor_raw: "3500000",
+                honor_rp: "Rp 3.500.000"
+            },
+            {
+                id: 2,
+                nomor_surat: "002/UND-RAKOR/XI/2026",
+                nama: "Ir. Siti Aminah, M.T.",
+                jabatan: "Direktur Sistem Informasi & Transformasi Digital",
+                instansi: "Institut Teknologi Nusantara",
+                kota: "Kota Bandung",
+                tanggal_raw: "11/25/2026",
+                tanggal_indo: "Rabu, 25 November 2026",
+                honor_raw: "4000000",
+                honor_rp: "Rp 4.000.000"
+            },
+            {
+                id: 3,
+                nomor_surat: "003/UND-RAKOR/XI/2026",
+                nama: "Andi Wijaya, S.E., M.Ak.",
+                jabatan: "Manajer Administrasi & Tata Kelola Korporat",
+                instansi: "PT Nusantara Karya Persada",
+                kota: "Kota Surabaya",
+                tanggal_raw: "11/26/2026",
+                tanggal_indo: "Kamis, 26 November 2026",
+                honor_raw: "3250000",
+                honor_rp: "Rp 3.250.000"
+            },
+            {
+                id: 4,
+                nomor_surat: "004/UND-RAKOR/XI/2026",
+                nama: "Dra. Ratna Kusuma Dewi, M.Si.",
+                jabatan: "Kepala Biro Kepegawaian dan Organisasi",
+                instansi: "Badan Pengembangan Aparatur Negara",
+                kota: "Kota Yogyakarta",
+                tanggal_raw: "11/26/2026",
+                tanggal_indo: "Kamis, 26 November 2026",
+                honor_raw: "3750000",
+                honor_rp: "Rp 3.750.000"
+            }
+        ];
+
+        // Simulation State
+        let simState = {
+            currentRecordIndex: 0, // 0 to 3
+            previewResults: true,
+            highlightFields: true,
+            altF9Mode: false,
+            labelMode: 'preview' // 'template' | 'preview' | 'bug'
+        };
+
+        // -----------------------------------------------------------------
+        // 2. TOAST NOTIFICATION & CLIPBOARD HELPER (NO ALERT USED)
+        // -----------------------------------------------------------------
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const bgClass = type === 'success' ? 'bg-emerald-600' : (type === 'warning' ? 'bg-amber-600' : 'bg-word-600');
+            toast.className = `${bgClass} text-white px-4 py-2.5 rounded-xl shadow-lg text-xs font-semibold flex items-center gap-2 pointer-events-auto transition-all duration-300`;
+            toast.innerHTML = `<i class="fa-solid fa-circle-check"></i> <span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 2600);
+        }
+
+        function copySnippet(text) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                showToast(`Kode berhasil disalin: ${text}`, 'success');
+            } catch (err) {
+                showToast('Gagal menyalin kode', 'warning');
+            }
+            document.body.removeChild(textArea);
+        }
+
+        // -----------------------------------------------------------------
+        // 3. THEME & NAVIGATION CONTROLS
+        // -----------------------------------------------------------------
+        function toggleDarkMode() {
+            const html = document.documentElement;
+            const icon = document.getElementById('theme-icon');
+            html.classList.toggle('dark');
+            if (html.classList.contains('dark')) {
+                icon.className = 'fa-solid fa-sun text-amber-400 text-sm';
+            } else {
+                icon.className = 'fa-solid fa-moon text-sm';
+            }
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // -----------------------------------------------------------------
+        // 4. SECTION 2: FIELD VS RECORD ANATOMY VISUALIZER
+        // -----------------------------------------------------------------
+        function clearAnatomyHighlights() {
+            document.getElementById('anat-row-header').className = 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-b-2 border-slate-300 dark:border-slate-600 transition-colors';
+            for (let c = 1; c <= 4; c++) {
+                document.querySelectorAll(`.anat-col-${c}`).forEach(el => {
+                    el.classList.remove('bg-blue-100', 'dark:bg-blue-900/60', 'ring-2', 'ring-blue-500');
+                });
+            }
+            document.querySelectorAll('.anat-record-row').forEach(row => {
+                row.classList.remove('bg-emerald-100', 'dark:bg-emerald-900/60', 'ring-2', 'ring-emerald-500');
+            });
+        }
+
+        function highlightAnatomy(mode) {
+            clearAnatomyHighlights();
+            const infoBox = document.getElementById('anatomy-info-box');
+            if (mode === 'field') {
+                for (let c = 1; c <= 4; c++) {
+                    document.querySelectorAll(`.anat-col-${c}`).forEach(el => {
+                        el.classList.add('bg-blue-100', 'dark:bg-blue-900/60');
+                    });
+                }
+                infoBox.innerHTML = `<div class="font-bold text-word-600 dark:text-blue-400 mb-1"><i class="fa-solid fa-table-columns mr-1.5"></i> FIELD (Kolom Vertikal) Disorot:</div>
+                Setiap kolom vertikal adalah <strong>1 Field</strong> (Kategori variabel). Tabel ini memiliki <strong>4 Field</strong>: <code>Nomor_Surat</code>, <code>Nama_Penerima</code>, <code>Jabatan</code>, dan <code>Kota</code>. Klik salah satu judul kolom pada tabel di bawah untuk melihat bagaimana satu Field dipetakan ke dokumen Word!`;
+            } else if (mode === 'record') {
+                document.querySelectorAll('.anat-record-row').forEach(row => {
+                    row.classList.add('bg-emerald-100', 'dark:bg-emerald-900/60');
+                });
+                infoBox.innerHTML = `<div class="font-bold text-excel-600 dark:text-emerald-400 mb-1"><i class="fa-solid fa-bars-staggered mr-1.5"></i> RECORD (Baris Horizontal) Disorot:</div>
+                Setiap baris horizontal di bawah header adalah <strong>1 Record</strong> (Satu set informasi lengkap milik satu penerima). Tabel ini memiliki <strong>3 Record</strong>, sehingga hasil akhir Mail Merge akan berjumlah <strong>3 halaman surat</strong>.`;
+            } else if (mode === 'header') {
+                document.getElementById('anat-row-header').className = 'bg-amber-200 dark:bg-amber-900/80 text-amber-950 dark:text-amber-100 border-b-2 border-amber-500 transition-colors';
+                infoBox.innerHTML = `<div class="font-bold text-amber-700 dark:text-amber-400 mb-1"><i class="fa-solid fa-heading mr-1.5"></i> HEADER ROW (Baris Pertama Tabel) Disorot:</div>
+                <strong>Baris 1</strong> pada Excel wajib berisi judul kolom. Microsoft Word membaca baris pertama ini untuk membuat daftar <strong>Insert Merge Field</strong> (seperti <code>«Nomor_Surat»</code> dan <code>«Nama_Penerima»</code>).`;
+            } else {
+                infoBox.innerHTML = `<div class="font-bold text-word-600 dark:text-blue-400 mb-1"><i class="fa-solid fa-circle-info mr-1.5"></i> Panduan Interaktif Struktur Tabel:</div>
+                Pilih salah satu tombol di atas (<strong>Sorot FIELD</strong>, <strong>Sorot RECORD</strong>, atau <strong>Sorot HEADER ROW</strong>) atau klik langsung pada sel tabel.`;
+            }
+        }
+
+        function highlightSpecificField(colIndex) {
+            clearAnatomyHighlights();
+            const fieldNames = ['', 'Nomor_Surat', 'Nama_Penerima', 'Jabatan', 'Kota'];
+            document.querySelectorAll(`.anat-col-${colIndex}`).forEach(el => {
+                el.classList.add('bg-blue-100', 'dark:bg-blue-900/60', 'ring-2', 'ring-blue-500');
+            });
+            document.getElementById('anatomy-info-box').innerHTML = `
+                <div class="font-bold text-word-600 dark:text-blue-400 mb-1"><i class="fa-solid fa-table-columns mr-1.5"></i> Field #${colIndex} Dipilih: «${fieldNames[colIndex]}»</div>
+                Seluruh nilai pada kolom vertikal ini akan mengisi penanda variabel <code>«${fieldNames[colIndex]}»</code> di dokumen Word secara bergantian dari Record 1 hingga Record 3.
+            `;
+        }
+
+        function highlightSpecificRecord(recIndex) {
+            clearAnatomyHighlights();
+            const row = document.getElementById(`anat-rec-${recIndex}`);
+            row.classList.add('bg-emerald-100', 'dark:bg-emerald-900/60', 'ring-2', 'ring-emerald-500');
+            const names = ['', 'Dr. Budi Santoso, M.Kom.', 'Ir. Siti Aminah, M.T.', 'Andi Wijaya, S.E., Ak.'];
+            document.getElementById('anatomy-info-box').innerHTML = `
+                <div class="font-bold text-excel-600 dark:text-emerald-400 mb-1"><i class="fa-solid fa-user-check mr-1.5"></i> Record #${recIndex} Dipilih (${names[recIndex]}):</div>
+                Baris horizontal ke-${recIndex} ini akan menghasilkan <strong>Halaman Surat ke-${recIndex}</strong> pada dokumen akhir.
+            `;
+        }
+
+        // -----------------------------------------------------------------
+        // 5. SECTION 4: RIBBON TAB MAILINGS INTERACTIVE INSPECTOR
+        // -----------------------------------------------------------------
+        const ribbonData = {
+            'envelopes': {
+                group: 'Grup 1: Create',
+                title: 'Envelopes (Pembuatan Amplop Satuan)',
+                icon: 'fa-solid fa-envelope text-amber-600',
+                desc: 'Digunakan untuk mengatur ukuran halaman dan mencetak alamat tujuan (Delivery Address) serta alamat pengirim (Return Address) pada satu lembar amplop secara cepat tanpa harus menggunakan sumber data massal.',
+                subitems: [
+                    '<strong>Delivery Address:</strong> Kotak pengisian alamat penerima surat.',
+                    '<strong>Return Address:</strong> Kotak pengisian alamat pengirim di pojok kiri atas amplop.',
+                    '<strong>Envelope Options:</strong> Mengatur ukuran amplop standar (Size 10, DL, C5, Monarch) dan jenis huruf.'
+                ]
+            },
+            'labels': {
+                group: 'Grup 1: Create',
+                title: 'Labels (Pembuatan Stiker Label Satuan)',
+                icon: 'fa-solid fa-tags text-emerald-600',
+                desc: 'Digunakan untuk membuat dan mencetak stiker label alamat dalam format kisi (grid) untuk satu teks yang sama atau satu kotak label tertentu.',
+                subitems: [
+                    '<strong>Full page of the same label:</strong> Mencetak teks yang sama di seluruh kotak dalam satu lembar kertas label.',
+                    '<strong>Single label:</strong> Mencetak hanya pada baris dan kolom kotak tertentu.',
+                    '<strong>Options:</strong> Memilih merek kertas label (Avery, Tom & Jerry, atau Custom ukuran milimeter).'
+                ]
+            },
+            'start-merge': {
+                group: 'Grup 2: Start Mail Merge',
+                title: 'Start Mail Merge (Memulai & Memilih Jenis Dokumen Utama)',
+                icon: 'fa-solid fa-envelopes-bulk text-word-600',
+                desc: 'Tombol utama yang wajib diklik pertama kali untuk menentukan bentuk akhir dokumen massal yang akan dibuat.',
+                subitems: [
+                    '<strong>Letters:</strong> Membuat surat, sertifikat, atau dokumen halaman penuh (1 Record = 1 Halaman).',
+                    '<strong>E-mail Messages:</strong> Mengirimkan dokumen sebagai badan pesan email personal melalui Outlook.',
+                    '<strong>Envelopes & Labels:</strong> Membuat amplop atau stiker label undangan secara massal dari tabel data.',
+                    '<strong>Directory:</strong> Menggabungkan seluruh baris data menjadi satu daftar berkesinambungan di halaman yang sama.',
+                    '<strong>Step-by-Step Mail Merge Wizard:</strong> Membuka panel panduan bertahap (Langkah 1 sampai 6) di sisi kanan layar.'
+                ]
+            },
+            'select-recipients': {
+                group: 'Grup 2: Start Mail Merge',
+                title: 'Select Recipients (Memilih & Menghubungkan Sumber Data)',
+                icon: 'fa-solid fa-users-gear text-excel-600',
+                desc: 'Berfungsi untuk menghubungkan dokumen utama di Microsoft Word dengan tabel basis data penerima (Data Source).',
+                subitems: [
+                    '<strong>Type a New List...:</strong> Membuka tabel formulir bawaan Word untuk mengetik data penerima baru dari nol (tersimpan dalam format <code>.mdb</code>).',
+                    '<strong>Use an Existing List...:</strong> Memilih file sumber data yang sudah disiapkan sebelumnya, seperti tabel <strong>Microsoft Excel (.xlsx)</strong>, Access, atau CSV.',
+                    '<strong>Choose from Outlook Contacts...:</strong> Mengimpor daftar penerima langsung dari kontak aplikasi Microsoft Outlook.'
+                ]
+            },
+            'edit-recipients': {
+                group: 'Grup 2: Start Mail Merge',
+                title: 'Edit Recipient List (Menyaring & Mengurutkan Daftar Penerima)',
+                icon: 'fa-solid fa-user-check text-purple-600',
+                desc: 'Membuka kotak dialog Mail Merge Recipients untuk memeriksa, memilih, mengurutkan, atau menyaring baris data sebelum digabungkan.',
+                subitems: [
+                    '<strong>Kotak Centang (Checkbox):</strong> Hapus centang pada baris tertentu jika penerima tersebut batal diundang/dicetak.',
+                    '<strong>Sort (Urutkan):</strong> Mengurutkan pencetakan surat berdasarkan abjad Nama atau Kota (Ascending A-Z / Descending Z-A).',
+                    '<strong>Filter (Saring):</strong> Menyaring kriteria spesifik (contoh: hanya cetak baris yang kolom <code>Kota</code> bernilai <code>"Jakarta"</code>).',
+                    '<strong>Find Duplicates:</strong> Mendeteksi baris data penerima yang tercatat ganda di dalam tabel.'
+                ]
+            },
+            'highlight-fields': {
+                group: 'Grup 3: Write & Insert Fields',
+                title: 'Highlight Merge Fields (Menyorot Penanda Variabel)',
+                icon: 'fa-solid fa-highlighter text-amber-500',
+                desc: 'Memberikan warna latar belakang abu-abu pada seluruh Merge Field di dalam naskah. Sangat berguna agar pengguna langsung mengetahui bagian mana yang merupakan variabel otomatis dan mana yang merupakan teks ketikan biasa.',
+                subitems: [
+                    'Warna abu-abu ini <strong>tidak ikut tercetak di kertas</strong> (hanya penanda visual di layar editor Word).',
+                    'Memudahkan pemeriksaan apakah ada spasi yang kurang di antara dua Merge Field.'
+                ]
+            },
+            'address-block': {
+                group: 'Grup 3: Write & Insert Fields',
+                title: 'Address Block (Blok Alamat Otomatis)',
+                icon: 'fa-solid fa-address-card text-sky-600',
+                desc: 'Menyisipkan paket susunan nama, instansi, jalan, kota, dan kode pos sekaligus dalam satu kode <code>«AddressBlock»</code> tanpa harus memasukkan kolom satu per satu.',
+                subitems: [
+                    '<strong>Match Fields:</strong> Digunakan untuk mencocokkan nama kolom berbahasa Indonesia di Excel (misal: <code>Kota_Tujuan</code>) dengan standar bahasa Inggris Word (<code>City</code>).'
+                ]
+            },
+            'greeting-line': {
+                group: 'Grup 3: Write & Insert Fields',
+                title: 'Greeting Line (Kalimat Sapaan Pembuka)',
+                icon: 'fa-solid fa-handshake text-indigo-600',
+                desc: 'Menyisipkan baris sapaan pembuka surat secara otomatis (seperti "Dear Mr. Santoso," atau "Kepada Yth. Bapak Budi,") dalam satu kode <code>«GreetingLine»</code>.',
+                subitems: [
+                    'Menyediakan pengaturan teks cadangan apabila kolom nama penerima kebetulan kosong.'
+                ]
+            },
+            'insert-field': {
+                group: 'Grup 3: Write & Insert Fields',
+                title: 'Insert Merge Field (Menyisipkan Kolom Tabel ke Naskah)',
+                icon: 'fa-solid fa-file-import text-word-600',
+                desc: 'Ikon paling penting pada tahap pengetikan! Menampilkan seluruh daftar nama kolom (Header Row) dari tabel Excel Anda untuk disisipkan ke posisi kursor aktif.',
+                subitems: [
+                    'Menghasilkan penanda berapit kurung sudut ganda seperti <code>«Nomor_Surat»</code>, <code>«Nama_Penerima»</code>, <code>«Jabatan»</code>.',
+                    'Dapat diformat hurufnya (Bold, Italic, warna teks, ukuran font) sama seperti teks biasa di Word.'
+                ]
+            },
+            'rules': {
+                group: 'Grup 3: Write & Insert Fields',
+                title: 'Rules (Aturan Logika & Perpindahan Record)',
+                icon: 'fa-solid fa-code-branch text-rose-600',
+                desc: 'Menambahkan instruksi logika pemrograman atau pengendalian urutan baris data ke dalam dokumen Mail Merge.',
+                subitems: [
+                    '<strong>Next Record (<code>«Next Record»</code>):</strong> Memerintahkan Word untuk membaca baris data berikutnya tanpa berganti halaman (Wajib untuk pembuatan <strong>Label Undangan</strong>).',
+                    '<strong>If...Then...Else:</strong> Logika percabangan bersyarat (Contoh: Jika kolom <code>Nilai >= 75</code> tampilkan teks <em>"LULUS"</em>, selain itu tampilkan <em>"REMEDIAL"</em>).',
+                    '<strong>Ask & Fill-in:</strong> Memunculkan kotak input manual saat proses penggabungan dijalankan.'
+                ]
+            },
+            'preview-results': {
+                group: 'Grup 4: Preview Results',
+                title: 'Preview Results (Meninjau Hasil Penggabungan Secara Langsung)',
+                icon: 'fa-solid fa-magnifying-glass-chart text-word-600',
+                desc: 'Mengubah tampilan kode <code>«Merge_Field»</code> menjadi data asli dari sumber data Excel secara instan di layar editor.',
+                subitems: [
+                    'Klik sekali untuk menyalakan mode tinjau (menampilkan data asli).',
+                    'Klik sekali lagi untuk kembali ke mode penyuntingan kode <code>«Merge_Field»</code>.'
+                ]
+            },
+            'find-check': {
+                group: 'Grup 4: Preview Results',
+                title: 'Navigasi Record, Find Recipient & Check for Errors',
+                icon: 'fa-solid fa-clipboard-check text-teal-600',
+                desc: 'Alat bantu untuk berpindah antar urutan penerima, mencari nama tertentu, dan mendeteksi kesalahan penggabungan.',
+                subitems: [
+                    '<strong>Tombol Panah Navigasi (|&#9664; &#9664; 1 &#9654; &#9654;|):</strong> Berpindah dari Record 1, Record 2, hingga Record terakhir.',
+                    '<strong>Find Recipient:</strong> Mencari posisi halaman penerima tertentu berdasarkan kata kunci nama atau nomor induk.',
+                    '<strong>Check for Errors:</strong> Menguji coba penggabungan dan melaporkan jika ada nama field yang tidak ditemukan.'
+                ]
+            },
+            'finish-merge': {
+                group: 'Grup 5: Finish',
+                title: 'Finish & Merge (Mengeksekusi Hasil Akhir Mail Merge)',
+                icon: 'fa-solid fa-flag-checkered text-emerald-600',
+                desc: 'Langkah pamungkas untuk menghasilkan seluruh dokumen individual, mencetaknya ke printer, atau mengirimkannya via email.',
+                subitems: [
+                    '<strong>Edit Individual Documents...:</strong> Menghasilkan file Word baru yang berisi seluruh halaman terpisah (Misal: 100 Record menjadi dokumen 100 halaman).',
+                    '<strong>Print Documents...:</strong> Mencetak seluruh atau sebagian halaman langsung ke mesin printer atau <em>Microsoft Print to PDF</em>.',
+                    '<strong>Send Email Messages...:</strong> Mengirim pesan email personal massal ke kolom alamat email penerima.'
+                ]
+            }
+        };
+
+        function inspectRibbon(key) {
+            document.querySelectorAll('.rib-btn').forEach(btn => {
+                btn.classList.remove('bg-blue-50', 'dark:bg-blue-950/70', 'ring-2', 'ring-word-600');
+            });
+            const activeBtn = document.getElementById(`rib-${key}`);
+            if (activeBtn) {
+                activeBtn.classList.add('bg-blue-50', 'dark:bg-blue-950/70', 'ring-2', 'ring-word-600');
+            }
+
+            const item = ribbonData[key];
+            const container = document.getElementById('ribbon-inspector-content');
+            const listHtml = item.subitems.map(sub => `
+                <li class="flex items-start gap-2.5 text-xs sm:text-sm text-slate-600 dark:text-slate-300">
+                    <i class="fa-solid fa-circle-arrow-right text-word-600 dark:text-blue-400 mt-1 shrink-0"></i>
+                    <span>${sub}</span>
+                </li>
+            `).join('');
+
+            container.innerHTML = `
+                <div class="flex flex-col md:flex-row gap-5 items-start">
+                    <div class="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center shrink-0 text-2xl shadow-inner">
+                        <i class="${item.icon}"></i>
+                    </div>
+                    <div class="space-y-2.5 flex-1">
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider text-word-600 dark:text-blue-400">${item.group}</span>
+                            <h3 class="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white">${item.title}</h3>
+                        </div>
+                        <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">${item.desc}</p>
+                        <div class="pt-2 border-t border-slate-100 dark:border-slate-800">
+                            <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Rincian Opsi & Sub-Menu:</div>
+                            <ul class="space-y-1.5">${listHtml}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // -----------------------------------------------------------------
+        // 6. SECTION 5: STEP CHECKLIST TRACKER
+        // -----------------------------------------------------------------
+        function toggleStepCheck(stepNum, fromCheckbox = false) {
+            const chk = document.getElementById(`step-chk-${stepNum}`);
+            const card = document.getElementById(`step-card-${stepNum}`);
+            if (!fromCheckbox) {
+                chk.checked = !chk.checked;
+            }
+            if (chk.checked) {
+                card.classList.add('border-emerald-500', 'bg-emerald-50/30', 'dark:bg-emerald-950/20');
+            } else {
+                card.classList.remove('border-emerald-500', 'bg-emerald-50/30', 'dark:bg-emerald-950/20');
+            }
+            updateStepProgress();
+        }
+
+        function updateStepProgress() {
+            let count = 0;
+            for (let i = 1; i <= 8; i++) {
+                if (document.getElementById(`step-chk-${i}`).checked) count++;
+            }
+            document.getElementById('step-progress-text').textContent = `${count} / 8 Langkah`;
+        }
+
+        // -----------------------------------------------------------------
+        // 7. SECTION 6: INTERACTIVE CASE 1 & CASE 2 SIMULATOR
+        // -----------------------------------------------------------------
+        function switchSimulationCase(caseNum) {
+            const c1 = document.getElementById('sim-case-1-container');
+            const c2 = document.getElementById('sim-case-2-container');
+            const t1 = document.getElementById('tab-case-1');
+            const t2 = document.getElementById('tab-case-2');
+
+            if (caseNum === 1) {
+                c1.classList.remove('hidden');
+                c2.classList.add('hidden');
+                t1.className = 'px-4 py-2 rounded-lg text-xs sm:text-sm font-bold bg-word-600 text-white shadow transition';
+                t2.className = 'px-4 py-2 rounded-lg text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-300 hover:text-slate-900 transition';
+            } else {
+                c1.classList.add('hidden');
+                c2.classList.remove('hidden');
+                t2.className = 'px-4 py-2 rounded-lg text-xs sm:text-sm font-bold bg-excel-600 text-white shadow transition';
+                t1.className = 'px-4 py-2 rounded-lg text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-300 hover:text-slate-900 transition';
+                renderLabelSimulation();
+            }
+        }
+
+        function renderCase1ExcelTable() {
+            const tbody = document.getElementById('case1-excel-tbody');
+            tbody.innerHTML = recipientRecords.map((rec, idx) => {
+                const isActive = idx === simState.currentRecordIndex;
+                const rowClass = isActive
+                    ? 'bg-blue-100/90 dark:bg-blue-900/50 font-semibold text-slate-900 dark:text-white ring-2 ring-inset ring-word-600'
+                    : 'hover:bg-slate-50 dark:hover:bg-slate-800/50 text-slate-600 dark:text-slate-300';
+                return `
+                    <tr onclick="selectRecordIndex(${idx})" class="${rowClass} cursor-pointer transition">
+                        <td class="py-2.5 px-3 border-r border-slate-200 dark:border-slate-800 text-center font-mono text-xs">
+                            <span class="px-2 py-0.5 rounded ${isActive ? 'bg-word-600 text-white font-bold' : 'bg-slate-200 dark:bg-slate-800'}">#${rec.id}</span>
+                        </td>
+                        <td class="py-2.5 px-3 border-r border-slate-200 dark:border-slate-800 font-mono text-xs">${rec.nomor_surat}</td>
+                        <td class="py-2.5 px-3 border-r border-slate-200 dark:border-slate-800">${rec.nama}</td>
+                        <td class="py-2.5 px-3 border-r border-slate-200 dark:border-slate-800">${rec.jabatan}</td>
+                        <td class="py-2.5 px-3 border-r border-slate-200 dark:border-slate-800">${rec.instansi}</td>
+                        <td class="py-2.5 px-3 border-r border-slate-200 dark:border-slate-800">${rec.kota}</td>
+                        <td class="py-2.5 px-3 border-r border-slate-200 dark:border-slate-800 font-mono text-xs">${rec.tanggal_indo}</td>
+                        <td class="py-2.5 px-3 font-mono text-xs">${rec.honor_rp}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function formatTokenHtml(fieldName, codeSwitch, value) {
+            if (simState.altF9Mode) {
+                return `<span class="merge-code">{ MERGEFIELD ${fieldName}${codeSwitch ? ' ' + codeSwitch : ''} }</span>`;
+            }
+            const highlightClass = simState.highlightFields
+                ? (simState.previewResults ? 'merge-preview-active' : 'merge-token-highlight')
+                : '';
+            if (simState.previewResults) {
+                return `<span class="merge-token ${highlightClass}">${value}</span>`;
+            } else {
+                return `<span class="merge-token ${highlightClass} font-mono">«${fieldName}»</span>`;
+            }
+        }
+
+        function renderCase1Document() {
+            const rec = recipientRecords[simState.currentRecordIndex];
+            document.getElementById('sim-record-num').textContent = rec.id;
+
+            document.getElementById('mf-nomor').outerHTML = `<span id="mf-nomor">${formatTokenHtml('Nomor_Surat', '', rec.nomor_surat)}</span>`;
+            document.getElementById('mf-nama').outerHTML = `<span id="mf-nama">${formatTokenHtml('Nama_Penerima', '', rec.nama)}</span>`;
+            document.getElementById('mf-jabatan').outerHTML = `<span id="mf-jabatan">${formatTokenHtml('Jabatan', '', rec.jabatan)}</span>`;
+            document.getElementById('mf-instansi').outerHTML = `<span id="mf-instansi">${formatTokenHtml('Instansi', '', rec.instansi)}</span>`;
+            document.getElementById('mf-kota').outerHTML = `<span id="mf-kota">${formatTokenHtml('Kota', '', rec.kota)}</span>`;
+            document.getElementById('mf-nama-inline').outerHTML = `<span id="mf-nama-inline">${formatTokenHtml('Nama_Penerima', '', rec.nama)}</span>`;
+            document.getElementById('mf-instansi-inline').outerHTML = `<span id="mf-instansi-inline">${formatTokenHtml('Instansi', '', rec.instansi)}</span>`;
+            document.getElementById('mf-tanggal').outerHTML = `<span id="mf-tanggal">${formatTokenHtml('Tanggal_Acara', '\\@ "dddd, dd MMMM yyyy"', rec.tanggal_indo)}</span>`;
+            document.getElementById('mf-honor').outerHTML = `<span id="mf-honor">${formatTokenHtml('Honorarium', '\\# "Rp #,##0"', rec.honor_rp)}</span>`;
+
+            // Update Button Labels & Status Banner
+            const btnPreview = document.getElementById('btn-sim-preview');
+            const lblPreview = document.getElementById('lbl-sim-preview');
+            const btnHighlight = document.getElementById('btn-sim-highlight');
+            const lblHighlight = document.getElementById('lbl-sim-highlight');
+            const btnAltF9 = document.getElementById('btn-sim-altf9');
+            const lblAltF9 = document.getElementById('lbl-sim-altf9');
+            const statusText = document.getElementById('sim-status-text');
+
+            lblPreview.textContent = `Preview Results: ${simState.previewResults ? 'ON' : 'OFF'}`;
+            btnPreview.className = simState.previewResults
+                ? 'px-3.5 py-2 rounded-xl text-xs font-bold bg-word-600 text-white ring-2 ring-blue-400 shadow flex items-center gap-2 transition'
+                : 'px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-700 hover:bg-slate-600 text-slate-200 flex items-center gap-2 transition';
+
+            lblHighlight.textContent = `Highlight Fields: ${simState.highlightFields ? 'ON' : 'OFF'}`;
+            btnHighlight.className = simState.highlightFields
+                ? 'px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-600 text-amber-300 ring-1 ring-amber-400/50 flex items-center gap-2 transition'
+                : 'px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-700 hover:bg-slate-600 text-slate-300 flex items-center gap-2 transition';
+
+            lblAltF9.textContent = `Simulasi Alt + F9: ${simState.altF9Mode ? 'ON' : 'OFF'}`;
+            btnAltF9.className = simState.altF9Mode
+                ? 'px-3.5 py-2 rounded-xl text-xs font-mono font-bold bg-amber-500 text-slate-950 ring-2 ring-amber-300 flex items-center gap-2 transition'
+                : 'px-3.5 py-2 rounded-xl text-xs font-mono font-bold bg-slate-700 hover:bg-amber-600 text-amber-300 hover:text-white border border-amber-500/40 flex items-center gap-2 transition';
+
+            if (simState.altF9Mode) {
+                statusText.innerHTML = `<i class="fa-solid fa-code text-amber-400 mr-1.5"></i>Mode <strong>Kode Field (Alt + F9) Aktif</strong>: Menampilkan sintaks <code>{ MERGEFIELD ... }</code> beserta Picture Switch Tanggal & Rupiah.`;
+            } else if (simState.previewResults) {
+                statusText.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400 mr-1.5"></i>Mode <strong>Preview Results Aktif</strong>: Menampilkan hasil penggabungan nyata untuk <strong>Record #${rec.id} (${rec.nama})</strong>.`;
+            } else {
+                statusText.innerHTML = `<i class="fa-solid fa-pen-ruler text-blue-400 mr-1.5"></i>Mode <strong>Desain Templat Utama</strong>: Menampilkan penanda variabel <code>«Merge_Field»</code> sebelum diisi data.`;
+            }
+
+            renderCase1ExcelTable();
+        }
+
+        function toggleSimPreview() {
+            simState.altF9Mode = false;
+            simState.previewResults = !simState.previewResults;
+            renderCase1Document();
+        }
+
+        function toggleSimHighlight() {
+            simState.highlightFields = !simState.highlightFields;
+            renderCase1Document();
+        }
+
+        function toggleSimAltF9() {
+            simState.altF9Mode = !simState.altF9Mode;
+            renderCase1Document();
+        }
+
+        function selectRecordIndex(idx) {
+            simState.currentRecordIndex = idx;
+            if (!simState.previewResults && !simState.altF9Mode) {
+                simState.previewResults = true;
+            }
+            renderCase1Document();
+        }
+
+        function changeRecord(dir) {
+            if (dir === 'first') simState.currentRecordIndex = 0;
+            else if (dir === 'last') simState.currentRecordIndex = recipientRecords.length - 1;
+            else if (dir === 'prev') simState.currentRecordIndex = Math.max(0, simState.currentRecordIndex - 1);
+            else if (dir === 'next') simState.currentRecordIndex = Math.min(recipientRecords.length - 1, simState.currentRecordIndex + 1);
+            renderCase1Document();
+        }
+
+        // Modal Finish & Merge All Pages
+        function openAllMergedModal() {
+            const modal = document.getElementById('all-pages-modal');
+            const body = document.getElementById('all-pages-body');
+            body.innerHTML = recipientRecords.map(rec => `
+                <div class="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-300 dark:border-slate-700 shadow space-y-3 text-xs">
+                    <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2">
+                        <span class="font-bold text-word-600 dark:text-blue-400">Halaman ${rec.id} (Record #${rec.id})</span>
+                        <span class="font-mono text-[11px] bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded">${rec.nomor_surat}</span>
+                    </div>
+                    <div class="space-y-0.5">
+                        <div class="text-slate-500">Kepada Yth.</div>
+                        <div class="font-bold text-sm text-slate-900 dark:text-white">${rec.nama}</div>
+                        <div class="text-slate-700 dark:text-slate-300">${rec.jabatan}</div>
+                        <div class="text-slate-600 dark:text-slate-400">${rec.instansi} — <strong class="underline">${rec.kota}</strong></div>
+                    </div>
+                    <div class="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-1">
+                        <div><strong>Jadwal:</strong> ${rec.tanggal_indo}</div>
+                        <div><strong>Honorarium:</strong> <span class="text-emerald-600 dark:text-emerald-400 font-bold">${rec.honor_rp}</span></div>
+                    </div>
+                </div>
+            `).join('');
+            modal.classList.remove('hidden');
+        }
+
+        function closeAllMergedModal() {
+            document.getElementById('all-pages-modal').classList.add('hidden');
+        }
+
+        // Case 2: Labels Simulator («Next Record»)
+        function setLabelSimMode(mode) {
+            simState.labelMode = mode;
+            const bTemp = document.getElementById('btn-lbl-template');
+            const bPrev = document.getElementById('btn-lbl-preview');
+            const bBug = document.getElementById('btn-lbl-bug');
+
+            bTemp.className = mode === 'template' ? 'px-3.5 py-2 rounded-xl text-xs font-bold bg-word-600 text-white ring-2 ring-blue-400 transition' : 'px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-700 hover:bg-slate-600 text-white transition';
+            bPrev.className = mode === 'preview' ? 'px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-600 text-white ring-2 ring-emerald-400 transition' : 'px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-700 hover:bg-slate-600 text-white transition';
+            bBug.className = mode === 'bug' ? 'px-3.5 py-2 rounded-xl text-xs font-bold bg-rose-600 text-white ring-2 ring-rose-400 transition' : 'px-3.5 py-2 rounded-xl text-xs font-bold bg-rose-800/70 hover:bg-rose-700 text-rose-100 transition';
+
+            renderLabelSimulation();
+        }
+
+        function renderLabelSimulation() {
+            const exp = document.getElementById('label-sim-explanation');
+            const grid = document.getElementById('label-grid-canvas');
+
+            if (simState.labelMode === 'template') {
+                exp.className = 'mb-4 p-3.5 rounded-xl bg-blue-100 dark:bg-blue-950/70 border border-blue-300 dark:border-blue-800 text-blue-950 dark:text-blue-200 text-xs sm:text-sm font-medium';
+                exp.innerHTML = `<i class="fa-solid fa-code mr-1.5"></i><strong>Struktur Templat Label:</strong> Perhatikan bahwa <strong>Kotak Label #1 tidak memakai <code>«Next Record»</code></strong> (karena langsung membaca Record 1), sedangkan <strong>Kotak Label #2, #3, dan #4 wajib diawali <code>«Next Record»</code></strong> agar berpindah ke baris tamu berikutnya.`;
+
+                grid.innerHTML = [1, 2, 3, 4].map(boxNum => `
+                    <div class="p-5 rounded-xl border-2 border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 relative space-y-1.5">
+                        <span class="absolute top-2.5 right-3 text-[11px] font-mono font-bold text-slate-400">Kotak Label #${boxNum}</span>
+                        ${boxNum > 1 ? `<div class="inline-block px-2 py-0.5 rounded bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 font-mono text-xs font-bold border border-rose-300 dark:border-rose-800">«Next Record»</div>` : `<div class="text-[11px] text-emerald-600 dark:text-emerald-400 font-bold">Mulai dari Record #1</div>`}
+                        <div class="text-xs text-slate-500">Kepada Yth.</div>
+                        <div class="font-mono text-sm font-bold text-word-600 dark:text-blue-400">«Nama_Penerima»</div>
+                        <div class="font-mono text-xs text-slate-700 dark:text-slate-300">«Jabatan»</div>
+                        <div class="font-mono text-xs text-slate-600 dark:text-slate-400">di «Kota»</div>
+                    </div>
+                `).join('');
+            } else if (simState.labelMode === 'preview') {
+                exp.className = 'mb-4 p-3.5 rounded-xl bg-emerald-100 dark:bg-emerald-950/70 border border-emerald-300 dark:border-emerald-800 text-emerald-950 dark:text-emerald-200 text-xs sm:text-sm font-medium';
+                exp.innerHTML = `<i class="fa-solid fa-circle-check mr-1.5"></i><strong>Hasil Benar (Dengan «Next Record»):</strong> Setiap kotak stiker label dalam satu lembar kertas berhasil menampilkan nama tamu yang berbeda secara berurutan (Record #1 sampai Record #4).`;
+
+                grid.innerHTML = recipientRecords.map((rec, idx) => `
+                    <div class="p-5 rounded-xl border-2 border-emerald-500/40 bg-white dark:bg-slate-900 relative space-y-1 shadow-sm">
+                        <span class="absolute top-2.5 right-3 text-[11px] font-mono font-bold text-emerald-600 dark:text-emerald-400">Kotak #${idx + 1} &rarr; Record #${rec.id}</span>
+                        <div class="text-xs text-slate-500">Kepada Yth.</div>
+                        <div class="text-sm font-extrabold text-slate-900 dark:text-white">${rec.nama}</div>
+                        <div class="text-xs text-slate-700 dark:text-slate-300">${rec.jabatan}</div>
+                        <div class="text-xs text-slate-500">${rec.instansi}</div>
+                        <div class="text-xs font-bold underline text-word-600 dark:text-blue-400 pt-1">di ${rec.kota}</div>
+                    </div>
+                `).join('');
+            } else {
+                const firstRec = recipientRecords[0];
+                exp.className = 'mb-4 p-3.5 rounded-xl bg-rose-100 dark:bg-rose-950/70 border border-rose-300 dark:border-rose-800 text-rose-950 dark:text-rose-200 text-xs sm:text-sm font-medium';
+                exp.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-1.5"></i><strong>Kesalahan Umum (Lupa Memasang «Next Record»):</strong> Jika kotak ke-2, ke-3, dan ke-4 tidak diberi aturan <code>«Next Record»</code>, maka seluruh kotak dalam satu lembar stiker hanya akan mengulang nama orang pertama (<strong>${firstRec.nama}</strong>)!`;
+
+                grid.innerHTML = [1, 2, 3, 4].map(boxNum => `
+                    <div class="p-5 rounded-xl border-2 border-rose-500/50 bg-rose-50/30 dark:bg-rose-950/20 relative space-y-1">
+                        <span class="absolute top-2.5 right-3 text-[11px] font-mono font-bold text-rose-600 dark:text-rose-400">Kotak #${boxNum} (Mengulang Record #1!)</span>
+                        <div class="text-xs text-slate-500">Kepada Yth.</div>
+                        <div class="text-sm font-extrabold text-slate-900 dark:text-white">${firstRec.nama}</div>
+                        <div class="text-xs text-slate-700 dark:text-slate-300">${firstRec.jabatan}</div>
+                        <div class="text-xs font-bold underline text-rose-600 dark:text-rose-400 pt-1">di ${firstRec.kota}</div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // -----------------------------------------------------------------
+        // 8. SECTION 7: INTERACTIVE PICTURE SWITCH TESTER
+        // -----------------------------------------------------------------
+        const switchTestCases = {
+            'date-full': {
+                rawCode: '{ MERGEFIELD Tanggal_Surat }',
+                rawOut: '11/25/2026',
+                switchCode: '{ MERGEFIELD Tanggal_Surat \\@ "dd MMMM yyyy" }',
+                finalOut: '25 November 2026'
+            },
+            'date-day': {
+                rawCode: '{ MERGEFIELD Tanggal_Acara }',
+                rawOut: '11/25/2026',
+                switchCode: '{ MERGEFIELD Tanggal_Acara \\@ "dddd, dd MMMM yyyy" }',
+                finalOut: 'Rabu, 25 November 2026'
+            },
+            'currency-rp': {
+                rawCode: '{ MERGEFIELD Honorarium }',
+                rawOut: '3500000',
+                switchCode: '{ MERGEFIELD Honorarium \\# "Rp #,##0" }',
+                finalOut: 'Rp 3.500.000'
+            },
+            'currency-dec': {
+                rawCode: '{ MERGEFIELD Total_Tagihan }',
+                rawOut: '3500000',
+                switchCode: '{ MERGEFIELD Total_Tagihan \\# "Rp #,##0.00" }',
+                finalOut: 'Rp 3.500.000,00'
+            },
+            'leading-zero': {
+                rawCode: '{ MERGEFIELD Nomor_Peserta }',
+                rawOut: '7',
+                switchCode: '{ MERGEFIELD Nomor_Peserta \\# "0000" }',
+                finalOut: '0007'
+            },
+            'uppercase': {
+                rawCode: '{ MERGEFIELD Nama_Penerima }',
+                rawOut: 'Dr. Budi Santoso',
+                switchCode: '{ MERGEFIELD Nama_Penerima \\* Upper }',
+                finalOut: 'DR. BUDI SANTOSO'
+            }
+        };
+
+        function updateSwitchTester() {
+            const val = document.getElementById('switch-tester-select').value;
+            const data = switchTestCases[val];
+            document.getElementById('tester-raw-code').textContent = data.rawCode;
+            document.getElementById('tester-raw-out').textContent = data.rawOut;
+            document.getElementById('tester-switch-code').textContent = data.switchCode;
+            document.getElementById('tester-final-out').textContent = data.finalOut;
+        }
+
+        // -----------------------------------------------------------------
+        // 9. SECTION 8: INTERACTIVE QUIZ
+        // -----------------------------------------------------------------
+        const quizQuestions = [
+            {
+                q: "1. Dalam tabel sumber data Microsoft Excel untuk Mail Merge, setiap kolom vertikal dan setiap baris horizontal masing-masing disebut...",
+                options: [
+                    "A. Record (Kolom) dan Field (Baris)",
+                    "B. Field (Kolom) dan Record (Baris)",
+                    "C. Main Document dan Data Source",
+                    "D. Header Row dan Picture Switch"
+                ],
+                correct: 1,
+                explanation: "Benar! Kolom vertikal mewakili kategori data yang disebut Field, sedangkan baris horizontal mewakili satu data utuh penerima yang disebut Record."
+            },
+            {
+                q: "2. Saat membuat stiker Label Undangan yang memuat 12 kotak dalam satu halaman, kode aturan apa yang wajib ada di awal kotak ke-2 hingga ke-12 agar nama tamu tidak berulang?",
+                options: [
+                    "A. «AddressBlock»",
+                    "B. «GreetingLine»",
+                    "C. «Next Record»",
+                    "D. «Highlight Merge Fields»"
+                ],
+                correct: 2,
+                explanation: "Tepat sekali! Aturan «Next Record» memerintahkan Word untuk berpindah membaca baris data berikutnya di halaman yang sama."
+            },
+            {
+                q: "3. Pintasan keyboard apakah yang digunakan di Microsoft Word untuk mengubah tampilan «Tanggal» menjadi kode kurung kurawal { MERGEFIELD Tanggal }?",
+                options: [
+                    "A. Ctrl + F9",
+                    "B. Alt + F9 (atau Alt + Fn + F9)",
+                    "C. Shift + F5",
+                    "D. Ctrl + Shift + M"
+                ],
+                correct: 1,
+                explanation: "Benar! Pintasan Alt + F9 berfungsi untuk membuka dan menyembunyikan kode Field (Toggle Field Codes) di seluruh dokumen Word."
+            },
+            {
+                q: "4. Kode Picture Switch manakah yang tepat untuk mengubah angka mentah 5000000 menjadi Rp 5.000.000?",
+                options: [
+                    "A. { MERGEFIELD Gaji \\@ \"Rp #,##0\" }",
+                    "B. { MERGEFIELD Gaji \\# \"Rp #,##0\" }",
+                    "C. { MERGEFIELD Gaji \\* \"Rp #,##0\" }",
+                    "D. { MERGEFIELD Gaji \\$ \"Rp 000\" }"
+                ],
+                correct: 1,
+                explanation: "Tepat! Sakelar \\# digunakan untuk pemformatan angka/nominal mata uang, sedangkan \\@ digunakan untuk pemformatan tanggal."
+            },
+            {
+                q: "5. Opsi manakah pada menu Finish & Merge yang berfungsi menghasilkan dokumen Word baru berisi seluruh halaman surat yang siap diperiksa atau disimpan?",
+                options: [
+                    "A. Select Recipients -> Use an Existing List",
+                    "B. Preview Results",
+                    "C. Edit Individual Documents...",
+                    "D. Edit Recipient List"
+                ],
+                correct: 2,
+                explanation: "Benar! Edit Individual Documents akan menggabungkan seluruh Record menjadi satu file dokumen Word baru yang memuat semua halaman."
+            }
+        ];
+
+        function renderQuiz() {
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = quizQuestions.map((item, qIdx) => {
+                const optsHtml = item.options.map((opt, oIdx) => `
+                    <button onclick="answerQuiz(${qIdx}, ${oIdx})" id="q-${qIdx}-opt-${oIdx}" class="w-full text-left px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-blue-50 dark:hover:bg-slate-800 text-xs sm:text-sm font-medium transition">
+                        ${opt}
+                    </button>
+                `).join('');
+                return `
+                    <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+                        <h4 class="font-bold text-slate-900 dark:text-white text-sm leading-snug">${item.q}</h4>
+                        <div class="space-y-2">${optsHtml}</div>
+                        <div id="q-${qIdx}-feedback" class="hidden p-3 rounded-xl text-xs"></div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function answerQuiz(qIdx, oIdx) {
+            const item = quizQuestions[qIdx];
+            const feedback = document.getElementById(`q-${qIdx}-feedback`);
+            for (let i = 0; i < item.options.length; i++) {
+                const btn = document.getElementById(`q-${qIdx}-opt-${i}`);
+                btn.className = 'w-full text-left px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs sm:text-sm font-medium opacity-70';
+            }
+            const selectedBtn = document.getElementById(`q-${qIdx}-opt-${oIdx}`);
+            const correctBtn = document.getElementById(`q-${qIdx}-opt-${item.correct}`);
+            correctBtn.className = 'w-full text-left px-3.5 py-2.5 rounded-xl border-2 border-emerald-500 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-900 dark:text-emerald-200 text-xs sm:text-sm font-bold';
+
+            feedback.classList.remove('hidden');
+            if (oIdx === item.correct) {
+                feedback.className = 'p-3 rounded-xl text-xs bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-200 border border-emerald-200 dark:border-emerald-800';
+                feedback.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600 mr-1"></i> ${item.explanation}`;
+            } else {
+                selectedBtn.className = 'w-full text-left px-3.5 py-2.5 rounded-xl border-2 border-rose-500 bg-rose-50 dark:bg-rose-950/60 text-rose-900 dark:text-rose-200 text-xs sm:text-sm font-bold';
+                feedback.className = 'p-3 rounded-xl text-xs bg-rose-50 dark:bg-rose-950/50 text-rose-800 dark:text-rose-200 border border-rose-200 dark:border-rose-800';
+                feedback.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-600 mr-1"></i> Kurang tepat. ${item.explanation}`;
+            }
+        }
+
+        function resetQuiz() {
+            renderQuiz();
+            showToast('Kuis berhasil direset!', 'info');
+        }
+
+        // -----------------------------------------------------------------
+        // INITIALIZE ON WINDOW LOAD
+        // -----------------------------------------------------------------
+        window.onload = function () {
+            inspectRibbon('start-merge');
+            renderCase1Document();
+            renderLabelSimulation();
+            renderQuiz();
+        };
+    </script>
+</body>
+</html>
